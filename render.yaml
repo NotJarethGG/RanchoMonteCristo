@@ -1,0 +1,66 @@
+# Blueprint de Render. Con este archivo en la raíz, Render → New → Blueprint
+# crea el servicio ya configurado. Las variables marcadas `sync: false` se
+# escriben a mano en el panel: no deben vivir en el repositorio.
+services:
+  - type: web
+    name: rancho-montecristo-api
+    runtime: docker
+    # El Dockerfile vive en api/; el contexto de build también.
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    plan: free
+    region: oregon
+    healthCheckPath: /up
+
+    envVars:
+      - key: APP_NAME
+        value: "Rancho Monte Cristo"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_TIMEZONE
+        value: America/Costa_Rica
+      - key: APP_LOCALE
+        value: es
+
+      # Render la genera sola la primera vez.
+      - key: APP_KEY
+        generateValue: true
+
+      # Se completan en el panel una vez que existan los dominios.
+      - key: APP_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+      # --- Base de datos (Supabase). Usar el pooler, no la conexión directa.
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: postgres
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: warning
+      - key: CACHE_STORE
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: MAIL_MAILER
+        value: log

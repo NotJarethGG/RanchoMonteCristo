@@ -209,7 +209,65 @@ se definen en `App\Enums\RoleName::permissions()` y viajan en el token de Sanctu
 Root directory `web/`. `vercel.json` ya trae el rewrite de SPA y el caché de assets.
 Variable de entorno: `VITE_API_URL=https://tu-api.com/api`.
 
-### Backend → hosting con PHP 8.2+ y MySQL
+### Backend → Render (Docker)
+
+Render no tiene entorno nativo de PHP, así que la API va en un contenedor.
+El repositorio ya trae todo lo necesario:
+
+| Archivo | Para qué |
+|---|---|
+| `api/Dockerfile` | Imagen Apache + PHP 8.2 con `pdo_pgsql`, `gd`, `zip` y OPcache |
+| `api/docker/vhost.conf` | Document root en `public/`, TLS detrás del proxy de Render |
+| `api/docker/php.ini` | Límites de subida acordes al máximo de 8 MB de la galería |
+| `api/docker/entrypoint.sh` | Fija el puerto de `$PORT`, migra y cachea config y rutas |
+| `render.yaml` | Blueprint con el servicio y sus variables |
+
+**Opción A — Blueprint.** En Render: *New → Blueprint* y apuntá al repositorio.
+Lee `render.yaml` y crea el servicio. Después completá en el panel las
+variables marcadas `sync: false` (las credenciales no van en el repositorio).
+
+**Opción B — A mano.** *New → Web Service*, conectá el repositorio y elegí:
+
+| Campo | Valor |
+|---|---|
+| Language / Runtime | **Docker** |
+| Dockerfile Path | `./api/Dockerfile` |
+| Docker Build Context Directory | `./api` |
+| Health Check Path | `/up` |
+
+Variables de entorno mínimas:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:...            # php artisan key:generate --show
+APP_URL=https://tu-api.onrender.com
+FRONTEND_URL=https://tu-sitio.vercel.app
+
+DB_CONNECTION=pgsql
+DB_HOST=aws-0-<region>.pooler.supabase.com
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres.<project-ref>
+DB_PASSWORD=<contraseña>
+DB_SSLMODE=require
+
+LOG_CHANNEL=stderr
+```
+
+`FRONTEND_URL` es lo que habilita CORS para el dominio de Vercel
+(`config/cors.php`, que además acepta los previews `*.vercel.app`).
+
+> ⚠️ **El disco de Render es efímero.** Las fotos que se suban desde
+> `/admin/galeria` se pierden en cada redespliegue o reinicio. Para producción
+> real hay que apuntar `FILESYSTEM_DISK` al disco `s3` —ya definido en
+> `config/filesystems.php`— con S3 o Cloudflare R2, o contratar un disco
+> persistente en Render.
+
+> ℹ️ En el plan gratuito el servicio se suspende tras ~15 minutos sin tráfico;
+> la primera visita después de eso tarda cerca de un minuto en responder.
+
+### Backend → cualquier hosting con PHP 8.2+
 
 ```bash
 composer install --no-dev --optimize-autoloader
@@ -218,9 +276,7 @@ php artisan storage:link
 php artisan config:cache && php artisan route:cache
 ```
 
-Apuntá el document root a `api/public/`. En `.env`:
-`APP_ENV=production`, `APP_DEBUG=false`, `FRONTEND_URL=https://tu-dominio.com`.
-`config/cors.php` ya acepta ese origen y los previews `*.vercel.app`.
+Apuntá el document root a `api/public/` y usá las mismas variables de arriba.
 
 ---
 
