@@ -71,7 +71,7 @@ export function Availability({
             </div>
           </Card>
 
-          <div className="space-y-5">
+          <div className="flex flex-col gap-5">
             {selectedDate ? (
               <Card className="animate-fade-up p-6 sm:p-7">
                 <p className="eyebrow">Fecha elegida</p>
@@ -140,7 +140,7 @@ export function Availability({
                 </button>
               </Card>
             ) : (
-              <Card className="flex h-full flex-col items-center justify-center p-10 text-center">
+              <Card className="flex grow flex-col items-center justify-center p-10 text-center">
                 <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-sage-100 text-forest-700">
                   <CalendarDays className="size-6" strokeWidth={1.5} />
                 </div>
