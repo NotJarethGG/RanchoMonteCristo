@@ -31,6 +31,25 @@ api.interceptors.request.use((config) => {
 /** Evento global para que el AuthProvider cierre sesión ante un 401. */
 export const UNAUTHORIZED_EVENT = 'rmc:unauthorized'
 
+/**
+ * Si la respuesta es HTML donde se esperaba JSON, casi siempre significa que
+ * `VITE_API_URL` apunta al propio sitio y no al backend: el hosting devuelve
+ * index.html con estado 200. Sin este control el fallo llega disfrazado de
+ * error de red y manda a buscar por el lado equivocado.
+ */
+api.interceptors.response.use((response) => {
+  const tipo = String(response.headers['content-type'] ?? '')
+
+  if (typeof response.data === 'string' && !tipo.includes('json')) {
+    throw new Error(
+      'La API devolvió HTML en lugar de JSON. Revisá VITE_API_URL: parece apuntar ' +
+        'al propio sitio en vez del backend.',
+    )
+  }
+
+  return response
+})
+
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<ApiErrorBody>) => {
@@ -63,6 +82,12 @@ export function normalizeError(error: unknown): NormalizedError {
       message: error.response.data?.message ?? 'Ocurrió un error inesperado.',
       errors: error.response.data?.errors ?? {},
     }
+  }
+
+  // Errores que no vienen de axios (por ejemplo el de HTML de arriba)
+  // conservan su mensaje, que suele ser el más útil para diagnosticar.
+  if (error instanceof Error && error.message) {
+    return { status: 0, message: error.message, errors: {} }
   }
 
   return { status: 0, message: 'Ocurrió un error inesperado.', errors: {} }

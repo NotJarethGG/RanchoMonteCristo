@@ -13,12 +13,13 @@ import { FinalCta } from '@/components/public/FinalCta'
 import { WhatsappFab } from '@/components/public/WhatsappFab'
 import { ErrorState, Spinner } from '@/components/ui/States'
 import { useLanding } from '@/hooks/usePublicData'
+import { normalizeError } from '@/lib/api'
 
 export default function HomePage() {
   // La fecha elegida en el calendario viaja hasta el formulario de reserva.
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [guests, setGuests] = useState(40)
-  const { data, isLoading, isError, refetch } = useLanding()
+  const { data, isLoading, isError, error, refetch } = useLanding()
 
   if (isLoading) {
     return (
@@ -31,7 +32,7 @@ export default function HomePage() {
   if (isError || !data) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-cream-50">
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState message={normalizeError(error).message} onRetry={() => refetch()} />
       </div>
     )
   }
