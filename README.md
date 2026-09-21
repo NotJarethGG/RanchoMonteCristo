@@ -22,7 +22,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Creá la base en MySQL (XAMPP → *Manager* → arrancar MySQL):
+#### Base de datos
+
+El proyecto corre igual sobre **MySQL/MariaDB** o **PostgreSQL (Supabase)**;
+se cambia con las variables `DB_*` del `.env` (ver `.env.example`).
+
+**Opción A — MySQL local (XAMPP → *Manager* → arrancar MySQL):**
 
 ```bash
 /Applications/XAMPP/xamppfiles/bin/mysql -u root -e "CREATE DATABASE rancho_montecristo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -36,7 +41,29 @@ php artisan storage:link      # para las imágenes que se suban desde el dashboa
 php artisan serve             # http://127.0.0.1:8000
 ```
 
-> **Sin MySQL a mano:** el proyecto trae una conexión `sqlite` lista.
+**Opción B — PostgreSQL en Supabase:**
+
+Copiá la cadena de *Project Settings → Database → **Connection pooling*** y
+completá el `.env`:
+
+```dotenv
+DB_CONNECTION=pgsql
+DB_HOST=aws-0-<region>.pooler.supabase.com
+DB_PORT=5432
+DB_DATABASE=postgres
+DB_USERNAME=postgres.<project-ref>
+DB_PASSWORD=<contraseña de la base>
+DB_SSLMODE=require
+```
+
+> ⚠️ **Usá el pooler, no la conexión directa.** El host `db.<ref>.supabase.co`
+> resuelve únicamente a IPv6, así que falla desde cualquier red o hosting sin
+> IPv6 (la mayoría). El pooler en el puerto 5432 es IPv4 y funciona en modo
+> sesión, que es lo que Laravel necesita.
+
+Después, igual que en MySQL: `php artisan migrate --seed`.
+
+> **Sin base de datos a mano:** el proyecto trae una conexión `sqlite` lista.
 > `touch database/database.sqlite && DB_CONNECTION=sqlite php artisan migrate:fresh --seed`
 > y luego `DB_CONNECTION=sqlite php artisan serve`.
 
@@ -111,6 +138,9 @@ Decisiones que vale la pena conocer:
 - `ranches` es una tabla, no un archivo de config, porque el propietario la edita
   desde `/admin/configuracion`. Lo que *no* se toca desde la UI vive en `config/ranch.php`
   (moneda, % de adelanto, anticipación mínima).
+- Las búsquedas del dashboard usan las macros `whereLike` / `orWhereLike`
+  (`AppServiceProvider`), que eligen `ILIKE` en PostgreSQL y `LIKE` en MySQL.
+  Sin eso, en Postgres buscar «jorge» no encontraría a «Jorge».
 
 ### Frontend
 

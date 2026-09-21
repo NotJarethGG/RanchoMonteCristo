@@ -26,9 +26,9 @@ class Customer extends Model
         }
 
         return $query->where(function (Builder $q) use ($term) {
-            $q->where('full_name', 'like', "%{$term}%")
-                ->orWhere('phone', 'like', "%{$term}%")
-                ->orWhere('email', 'like', "%{$term}%");
+            $q->whereLike('full_name', $term)
+                ->orWhereLike('phone', $term)
+                ->orWhereLike('email', $term);
         });
     }
 

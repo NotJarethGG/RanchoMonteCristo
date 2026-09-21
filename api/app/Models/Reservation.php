@@ -117,8 +117,8 @@ class Reservation extends Model
         }
 
         return $query->where(function (Builder $q) use ($term) {
-            $q->where('code', 'like', "%{$term}%")
-                ->orWhere('event_type', 'like', "%{$term}%")
+            $q->whereLike('code', $term)
+                ->orWhereLike('event_type', $term)
                 ->orWhereHas('customer', fn (Builder $c) => $c->search($term));
         });
     }
