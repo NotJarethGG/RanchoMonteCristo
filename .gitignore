@@ -1,0 +1,38 @@
+# --- Sistema
+.DS_Store
+Thumbs.db
+
+# --- Dependencias y builds
+node_modules/
+/web/dist/
+/api/vendor/
+
+# --- Variables de entorno (nunca al repositorio)
+.env
+.env.*
+!.env.example
+
+# --- Laravel
+/api/storage/*.key
+/api/storage/logs/*.log
+/api/storage/framework/cache/data/*
+/api/storage/framework/sessions/*
+/api/storage/framework/views/*
+/api/storage/framework/testing/*
+/api/bootstrap/cache/*.php
+/api/public/storage
+/api/public/build
+/api/public/hot
+/api/.phpunit.result.cache
+/api/.phpunit.cache
+
+# --- Archivos subidos desde el dashboard (no son código)
+/api/storage/app/public/*
+!/api/storage/app/public/.gitkeep
+
+# --- Base local de respaldo
+/api/database/database.sqlite
+
+# --- Editores
+/.idea
+/.vscode

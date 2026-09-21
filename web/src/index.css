@@ -1,0 +1,136 @@
+@import 'tailwindcss';
+
+/*
+|--------------------------------------------------------------------------
+| Sistema de diseño — Rancho Monte Cristo
+|--------------------------------------------------------------------------
+| Paleta natural premium: verdes de montaña, arena cálida y un acento
+| terracota para las llamadas a la acción. Todo se expone como tokens de
+| Tailwind v4 para usarlos como `bg-forest-800`, `text-clay-600`, etc.
+*/
+
+@theme {
+  /* Verdes — identidad principal */
+  --color-bark-950: #141b16;
+  --color-forest-900: #1f2d23;
+  --color-forest-800: #2b3f31;
+  --color-forest-700: #3a5441;
+  --color-moss-600: #4f6b52;
+  --color-moss-500: #64815f;
+  --color-sage-400: #8ba383;
+  --color-sage-300: #a9bda1;
+  --color-sage-200: #c9d6c1;
+  --color-sage-100: #e3eade;
+
+  /* Neutros cálidos — fondos y superficies */
+  --color-cream-50: #faf8f2;
+  --color-sand-100: #f2ece0;
+  --color-sand-200: #e5dbc9;
+  --color-sand-300: #d3c5ac;
+  --color-stone-600: #6b6355;
+  --color-stone-700: #4c463c;
+
+  /* Acentos */
+  --color-clay-700: #96502e;
+  --color-clay-600: #b4623a;
+  --color-clay-500: #c9764b;
+  --color-clay-100: #f6e6dc;
+  --color-gold-600: #a8863f;
+  --color-gold-500: #c2a05a;
+  --color-gold-100: #f4ecd9;
+
+  /* Estados */
+  --color-ok-600: #3f7a4f;
+  --color-ok-100: #e2f0e4;
+  --color-warn-600: #b58324;
+  --color-warn-100: #fbf0d8;
+  --color-danger-600: #ad3f3f;
+  --color-danger-100: #f8e4e4;
+
+  /* Tipografía */
+  --font-display: 'Newsreader', ui-serif, Georgia, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Sombras suaves, sin el gris azulado por defecto */
+  --shadow-soft: 0 1px 2px rgb(31 45 35 / 0.04), 0 8px 24px -12px rgb(31 45 35 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(31 45 35 / 0.06), 0 18px 40px -16px rgb(31 45 35 / 0.22);
+
+  --radius-xl2: 1.25rem;
+
+  /* Microinteracciones */
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  --animate-scale-in: scale-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-cream-50 text-forest-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+    font-optical-sizing: auto;
+  }
+
+  /* Foco visible y consistente en toda la app */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-clay-600;
+  }
+
+  ::selection {
+    @apply bg-sage-200 text-forest-900;
+  }
+}
+
+@layer components {
+  /* Contenedor editorial: ancho cómodo y respiración generosa */
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12;
+  }
+
+  .section-y {
+    @apply py-20 sm:py-24 lg:py-32;
+  }
+
+  /* Etiqueta pequeña en versalitas que antecede a los títulos */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-clay-600;
+  }
+
+  .skeleton {
+    @apply rounded-lg bg-linear-to-r from-sand-200 via-sand-100 to-sand-200 bg-[length:200%_100%] animate-shimmer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

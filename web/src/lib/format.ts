@@ -1,0 +1,69 @@
+import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns'
+import { es } from 'date-fns/locale'
+
+const currency = new Intl.NumberFormat('es-CR', {
+  style: 'currency',
+  currency: 'CRC',
+  maximumFractionDigits: 0,
+})
+
+export const formatMoney = (value: number | string | null | undefined) =>
+  currency.format(Number(value ?? 0))
+
+/** Versión compacta para tarjetas de estadísticas: ₡1,2 M */
+export function formatMoneyShort(value: number) {
+  if (Math.abs(value) >= 1_000_000) return `₡${(value / 1_000_000).toFixed(1).replace('.', ',')} M`
+  if (Math.abs(value) >= 1_000) return `₡${Math.round(value / 1_000)} K`
+  return formatMoney(value)
+}
+
+/** Acepta 'YYYY-MM-DD' sin desplazamiento por zona horaria. */
+export function toDate(value: string | Date): Date {
+  if (value instanceof Date) return value
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : parseISO(value)
+}
+
+export function formatDate(value: string | Date | null | undefined, pattern = "d 'de' MMMM, yyyy") {
+  if (!value) return '—'
+  const date = toDate(value)
+  return isValid(date) ? format(date, pattern, { locale: es }) : '—'
+}
+
+export const formatDateShort = (value: string | Date | null | undefined) =>
+  formatDate(value, 'd MMM yyyy')
+
+export const formatWeekday = (value: string | Date) => formatDate(value, 'EEEE')
+
+export function formatRelative(value: string | null | undefined) {
+  if (!value) return '—'
+  const date = toDate(value)
+  return isValid(date) ? formatDistanceToNowStrict(date, { locale: es, addSuffix: true }) : '—'
+}
+
+/** '09:00' → '9:00 a.m.' */
+export function formatTime(value: string | null | undefined) {
+  if (!value) return '—'
+  const [h, m] = value.split(':').map(Number)
+  const suffix = h < 12 ? 'a.m.' : 'p.m.'
+  const hour = h % 12 === 0 ? 12 : h % 12
+  return `${hour}:${String(m).padStart(2, '0')} ${suffix}`
+}
+
+export const formatTimeRange = (start: string, end: string) =>
+  `${formatTime(start)} – ${formatTime(end)}`
+
+/** '+50688881122' → 'https://wa.me/50688881122' */
+export const whatsappLink = (phone: string | null | undefined, message?: string) => {
+  if (!phone) return '#'
+  const clean = phone.replace(/[^0-9]/g, '')
+  const text = message ? `?text=${encodeURIComponent(message)}` : ''
+  return `https://wa.me/${clean}${text}`
+}
+
+export const initials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('')
