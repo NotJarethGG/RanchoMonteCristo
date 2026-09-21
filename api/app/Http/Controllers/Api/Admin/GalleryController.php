@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\GalleryImageResource;
 use App\Models\GalleryImage;
 use App\Models\Ranch;
+use App\Services\CloudinaryUploader;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -36,13 +37,26 @@ class GalleryController extends Controller
             'is_active' => ['sometimes', 'boolean'],
         ]);
 
-        $path = $request->hasFile('image')
-            ? $request->file('image')->store('gallery', 'public')
-            : $data['path'];
+        // Con Cloudinary configurado la imagen vive fuera del servidor, así que
+        // sobrevive a los redespliegues. Sin credenciales se usa el disco local.
+        $path = $data['path'] ?? null;
+        $externalId = null;
+
+        if ($request->hasFile('image')) {
+            $subida = CloudinaryUploader::fromConfig()->upload($request->file('image'));
+
+            if ($subida) {
+                $path = $subida['url'];
+                $externalId = $subida['public_id'];
+            } else {
+                $path = $request->file('image')->store('gallery', 'public');
+            }
+        }
 
         $image = $ranch->galleryImages()->create([
             ...collect($data)->except(['image', 'path'])->all(),
             'path' => $path,
+            'external_id' => $externalId,
             'sort_order' => (int) $ranch->galleryImages()->max('sort_order') + 1,
         ]);
 
@@ -82,7 +96,9 @@ class GalleryController extends Controller
 
     public function destroy(GalleryImage $galleryImage): JsonResponse
     {
-        if (! Str::startsWith($galleryImage->path, ['http://', 'https://'])) {
+        if ($galleryImage->external_id) {
+            CloudinaryUploader::fromConfig()->delete($galleryImage->external_id);
+        } elseif (! Str::startsWith($galleryImage->path, ['http://', 'https://'])) {
             Storage::disk('public')->delete($galleryImage->path);
         }
 

@@ -14,7 +14,7 @@ class GalleryImage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ranch_id', 'title', 'caption', 'alt', 'path', 'category',
+        'ranch_id', 'title', 'caption', 'alt', 'path', 'external_id', 'category',
         'is_featured', 'is_active', 'sort_order',
     ];
 
