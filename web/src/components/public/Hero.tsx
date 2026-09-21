@@ -17,13 +17,22 @@ export function Hero({ ranch, cover }: { ranch?: Ranch; cover?: GalleryImage }) 
 
   return (
     <section className="relative flex min-h-[92svh] items-end overflow-hidden">
+      {/* El titular se alinea a la izquierda, así que la foto se corre hacia
+          la derecha para que su motivo no quede detrás del texto. El zoom
+          anclado a la izquierda es lo que genera ese margen: con `object-cover`
+          a secas la imagen calza justo y `object-position` no tiene efecto. */}
       <img
         src={image}
         alt={cover?.alt ?? 'Vista del rancho'}
-        className="absolute inset-0 size-full object-cover"
+        className="absolute inset-0 size-full origin-left scale-100 object-cover object-center lg:scale-110"
         fetchPriority="high"
       />
-      <div className="absolute inset-0 bg-linear-to-t from-bark-950/92 via-bark-950/45 to-bark-950/45" />
+
+      {/* El velo es responsivo. En móvil el texto ocupa todo el ancho, así que
+          se usa una capa pareja; desde `sm` el texto vive a la izquierda y el
+          degradado horizontal le da contraste sin apagar el resto de la foto. */}
+      <div className="absolute inset-0 bg-bark-950/72 sm:bg-transparent sm:bg-linear-to-r sm:from-bark-950/92 sm:via-bark-950/60 sm:to-bark-950/15" />
+      <div className="absolute inset-0 bg-linear-to-t from-bark-950/85 via-bark-950/20 to-bark-950/45 sm:via-transparent sm:to-bark-950/40" />
 
       <div className="container-page relative w-full pb-16 pt-32 sm:pb-20 lg:pb-24">
         <div className="max-w-3xl animate-fade-up">
