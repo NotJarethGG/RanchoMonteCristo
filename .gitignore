@@ -13,12 +13,19 @@ node_modules/
 !.env.example
 
 # --- Laravel
+# Se ignora el contenido pero se versiona un .gitkeep por carpeta: si esas
+# carpetas no existieran tras un `git clone`, Laravel no arrancaría (no podría
+# escribir vistas compiladas ni sesiones).
 /api/storage/*.key
 /api/storage/logs/*.log
 /api/storage/framework/cache/data/*
+!/api/storage/framework/cache/data/.gitkeep
 /api/storage/framework/sessions/*
+!/api/storage/framework/sessions/.gitkeep
 /api/storage/framework/views/*
+!/api/storage/framework/views/.gitkeep
 /api/storage/framework/testing/*
+!/api/storage/framework/testing/.gitkeep
 /api/bootstrap/cache/*.php
 /api/public/storage
 /api/public/build

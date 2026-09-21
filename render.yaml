@@ -5,9 +5,10 @@ services:
   - type: web
     name: rancho-montecristo-api
     runtime: docker
-    # El Dockerfile vive en api/; el contexto de build también.
-    dockerfilePath: ./api/Dockerfile
-    dockerContext: ./api
+    # Dockerfile y contexto en la raíz: son los valores por defecto de Render,
+    # así no hay nada que configurar a mano en el panel.
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     plan: free
     region: oregon
     healthCheckPath: /up

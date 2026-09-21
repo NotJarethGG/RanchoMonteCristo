@@ -216,7 +216,7 @@ El repositorio ya trae todo lo necesario:
 
 | Archivo | Para qué |
 |---|---|
-| `api/Dockerfile` | Imagen Apache + PHP 8.2 con `pdo_pgsql`, `gd`, `zip` y OPcache |
+| `Dockerfile` | Imagen Apache + PHP 8.2 con `pdo_pgsql`, `gd`, `zip` y OPcache. Está en la raíz a propósito: así el contexto de build es el repositorio y Render no necesita configuración extra |
 | `api/docker/vhost.conf` | Document root en `public/`, TLS detrás del proxy de Render |
 | `api/docker/php.ini` | Límites de subida acordes al máximo de 8 MB de la galería |
 | `api/docker/entrypoint.sh` | Fija el puerto de `$PORT`, migra y cachea config y rutas |
@@ -231,8 +231,8 @@ variables marcadas `sync: false` (las credenciales no van en el repositorio).
 | Campo | Valor |
 |---|---|
 | Language / Runtime | **Docker** |
-| Dockerfile Path | `./api/Dockerfile` |
-| Docker Build Context Directory | `./api` |
+| Dockerfile Path | `./Dockerfile` *(por defecto)* |
+| Docker Build Context Directory | `.` *(por defecto)* |
 | Health Check Path | `/up` |
 
 Variables de entorno mínimas:

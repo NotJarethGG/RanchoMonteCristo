@@ -1,0 +1,35 @@
+# El contexto es el repositorio completo, así que acá se recorta todo lo que
+# la imagen de la API no necesita. Sin esto se subirían node_modules y el .git.
+.git
+.github
+.claude
+.DS_Store
+
+# El frontend se despliega en Vercel, no entra en la imagen.
+web/
+fotos-originales/
+
+# Dependencias y artefactos que se regeneran dentro del contenedor.
+api/vendor/
+api/node_modules/
+
+# Secretos: las variables las inyecta Render.
+api/.env
+api/.env.*
+!api/.env.example
+
+# Estado local que no debe viajar. Se conservan los .gitkeep porque Laravel
+# necesita que esas carpetas existan para arrancar y para enlazar storage.
+api/storage/logs/*
+!api/storage/logs/.gitkeep
+api/storage/framework/cache/data/*
+!api/storage/framework/cache/data/.gitkeep
+api/storage/framework/sessions/*
+!api/storage/framework/sessions/.gitkeep
+api/storage/framework/views/*
+!api/storage/framework/views/.gitkeep
+api/storage/app/public/*
+!api/storage/app/public/.gitkeep
+api/bootstrap/cache/*.php
+api/database/database.sqlite
+api/tests/

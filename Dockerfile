@@ -4,6 +4,10 @@
 # Render no tiene entorno nativo de PHP, así que el despliegue va por Docker.
 # Se usa Apache + mod_php: menos piezas que nginx + php-fpm y suficiente para
 # una API de este tamaño.
+#
+# El Dockerfile vive en la raíz a propósito, aunque la API esté en api/: así el
+# contexto de build es el repositorio completo y Render funciona con sus valores
+# por defecto, sin tener que configurar el directorio de contexto a mano.
 # ---------------------------------------------------------------------------
 FROM php:8.2-apache
 
@@ -32,11 +36,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # --- Configuración de PHP para producción
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY docker/php.ini "$PHP_INI_DIR/conf.d/99-rancho.ini"
+COPY api/docker/php.ini "$PHP_INI_DIR/conf.d/99-rancho.ini"
 
 # --- Apache: el document root es public/, no la raíz del proyecto
 RUN a2enmod rewrite headers
-COPY docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY api/docker/vhost.conf /etc/apache2/sites-available/000-default.conf
 
 WORKDIR /var/www/html
 
@@ -44,7 +48,7 @@ WORKDIR /var/www/html
 # Se copian primero los archivos de composer para aprovechar la caché de capas:
 # mientras no cambien, `composer install` no se vuelve a ejecutar.
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY composer.json composer.lock ./
+COPY api/composer.json api/composer.lock ./
 RUN composer install \
         --no-dev \
         --no-scripts \
@@ -52,13 +56,13 @@ RUN composer install \
         --prefer-dist \
         --no-interaction
 
-# --- Código de la aplicación
-COPY . .
+# --- Código de la aplicación (solo api/: el frontend no entra en la imagen)
+COPY api/ .
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R ug+rw storage bootstrap/cache
 
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint
+COPY api/docker/entrypoint.sh /usr/local/bin/entrypoint
 RUN chmod +x /usr/local/bin/entrypoint
 
 # Render inyecta $PORT; el entrypoint lo aplica a la configuración de Apache.
