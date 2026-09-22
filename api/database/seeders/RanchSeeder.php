@@ -19,8 +19,8 @@ class RanchSeeder extends Seeder
                     .'rancho techado y todas las comodidades para recibir a tu gente. '
                     .'Alquilamos el lugar completo, sin compartirlo con otros grupos, para que tu evento sea realmente tuyo.',
 
-                'phone' => '+506 2222-3344',
-                'whatsapp' => '50688881122',
+                'phone' => '8934-3847',
+                'whatsapp' => '50689343847',
                 'email' => 'reservas@ranchomontecristo.com',
 
                 'address' => '2 km norte de la iglesia, camino a la montaña',

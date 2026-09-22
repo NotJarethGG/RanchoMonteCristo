@@ -52,6 +52,21 @@ export function formatTime(value: string | null | undefined) {
 export const formatTimeRange = (start: string, end: string) =>
   `${formatTime(start)} – ${formatTime(end)}`
 
+/**
+ * Enlace para llamar. Los números de Costa Rica se guardan con 8 dígitos
+ * («8934-3847»), que no sirven para marcar desde el exterior ni desde un
+ * celular configurado en internacional. Se antepone el código de país cuando
+ * falta; si el número ya trae uno, se respeta.
+ */
+export function telLink(phone: string | null | undefined) {
+  if (!phone) return '#'
+
+  const digits = phone.replace(/[^0-9+]/g, '')
+  if (digits.startsWith('+')) return `tel:${digits}`
+
+  return `tel:${digits.length === 8 ? `+506${digits}` : digits}`
+}
+
 /** '+50688881122' → 'https://wa.me/50688881122' */
 export const whatsappLink = (phone: string | null | undefined, message?: string) => {
   if (!phone) return '#'

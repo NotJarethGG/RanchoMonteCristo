@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import { FacebookIcon, InstagramIcon, TiktokIcon } from '@/components/ui/BrandIcons'
-import { whatsappLink } from '@/lib/format'
+import { telLink, whatsappLink } from '@/lib/format'
 import type { Ranch } from '@/types'
 
 export function PublicFooter({ ranch }: { ranch?: Ranch }) {
@@ -48,7 +48,7 @@ export function PublicFooter({ ranch }: { ranch?: Ranch }) {
             {ranch?.contact.phone && (
               <li>
                 <a
-                  href={`tel:${ranch.contact.phone.replace(/\s/g, '')}`}
+                  href={telLink(ranch.contact.phone)}
                   className="inline-flex items-center gap-2.5 transition-colors hover:text-cream-50"
                 >
                   <Phone className="size-4 shrink-0 text-sage-400" />

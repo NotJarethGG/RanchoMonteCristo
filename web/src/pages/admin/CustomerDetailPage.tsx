@@ -7,7 +7,7 @@ import { Table, Td, Th, Tr } from '@/components/ui/Table'
 import { PaymentBadge, StatusBadge } from '@/components/ui/Badge'
 import { EmptyState, ErrorState, Spinner } from '@/components/ui/States'
 import { useCustomer } from '@/hooks/useAdminData'
-import { formatDateShort, formatMoney, initials, whatsappLink } from '@/lib/format'
+import { formatDateShort, formatMoney, initials, telLink, whatsappLink } from '@/lib/format'
 
 export default function CustomerDetailPage() {
   const { id } = useParams()
@@ -50,7 +50,7 @@ export default function CustomerDetailPage() {
               <h2 className="mt-4 font-display text-xl text-forest-900">{customer.full_name}</h2>
 
               <div className="mt-5 space-y-3 text-left">
-                <a href={`tel:${customer.phone}`} className="flex items-center gap-2.5 text-sm text-stone-700 transition-colors hover:text-clay-600">
+                <a href={telLink(customer.phone)} className="flex items-center gap-2.5 text-sm text-stone-700 transition-colors hover:text-clay-600">
                   <Phone className="size-4 shrink-0 text-stone-600/60" />
                   {customer.phone}
                 </a>

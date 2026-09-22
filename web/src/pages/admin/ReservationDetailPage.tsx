@@ -17,7 +17,7 @@ import {
   useCancelReservation, useCompleteReservation, useConfirmReservation, useReservation,
 } from '@/hooks/useAdminData'
 import {
-  formatDate, formatDateShort, formatMoney, formatTimeRange, whatsappLink,
+  formatDate, formatDateShort, formatMoney, formatTimeRange, telLink, whatsappLink,
 } from '@/lib/format'
 
 export default function ReservationDetailPage() {
@@ -201,7 +201,7 @@ export default function ReservationDetailPage() {
               <p className="font-display text-xl text-forest-900">{customer?.full_name}</p>
 
               {customer?.phone && (
-                <a href={`tel:${customer.phone}`} className="flex items-center gap-2.5 text-sm text-stone-700 transition-colors hover:text-clay-600">
+                <a href={telLink(customer.phone)} className="flex items-center gap-2.5 text-sm text-stone-700 transition-colors hover:text-clay-600">
                   <Phone className="size-4 shrink-0 text-stone-600/60" />
                   {customer.phone}
                 </a>

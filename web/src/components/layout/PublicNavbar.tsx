@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Menu, X, Phone } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useIsScrolled, useScrollSpy } from '@/hooks/useScrollSpy'
+import { telLink } from '@/lib/format'
 import type { Ranch } from '@/types'
 
 const LINKS = [
@@ -76,7 +77,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
         <div className="hidden items-center gap-3 lg:flex">
           {ranch?.contact.phone && (
             <a
-              href={`tel:${ranch.contact.phone.replace(/\s/g, '')}`}
+              href={telLink(ranch.contact.phone)}
               className={cn(
                 'inline-flex items-center gap-2 text-sm font-medium transition-colors',
                 scrolled ? 'text-forest-800 hover:text-clay-600' : 'text-cream-50/85 hover:text-cream-50',
