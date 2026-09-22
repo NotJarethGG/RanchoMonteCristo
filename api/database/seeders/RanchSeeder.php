@@ -23,12 +23,12 @@ class RanchSeeder extends Seeder
                 'whatsapp' => '50689343847',
                 'email' => 'reservas@ranchomontecristo.com',
 
-                'address' => '2 km norte de la iglesia, camino a la montaña',
+                'address' => '1,5 km al oeste de la Escuela Saúl Cárdenas (Plus Code 4GJP+W47)',
                 'city' => 'Nicoya',
                 'province' => 'Guanacaste',
-                'latitude' => 10.1483,
-                'longitude' => -85.4520,
-                'google_maps_url' => 'https://maps.google.com/?q=10.1483,-85.4520',
+                'latitude' => 10.132288,
+                'longitude' => -85.464703,
+                'google_maps_url' => 'https://www.google.com/maps/search/?api=1&query=10.132288,-85.464703',
 
                 'capacity' => 120,
                 'check_in_time' => '09:00',
