@@ -1,62 +1,50 @@
-import { ArrowRight, MessageCircle } from 'lucide-react'
+import { Greca } from '@/components/brand/Greca'
 import { whatsappLink } from '@/lib/format'
-import { imageSrcSet, imageUrl } from '@/lib/image'
-import type { GalleryImage, Ranch } from '@/types'
+import type { Ranch } from '@/types'
 
-export function FinalCta({ ranch, image }: { ranch?: Ranch; image?: GalleryImage }) {
-  const background =
-    image?.url ??
-    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=2000&q=80'
+/**
+ * Cierre en una franja terracota. El número de WhatsApp es el
+ * protagonista: en Costa Rica es como la gente de verdad aparta una fecha.
+ */
+export function FinalCta({ ranch }: { ranch: Ranch }) {
+  const go = () =>
+    document.getElementById('disponibilidad')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
-    <section className="relative overflow-hidden">
-      <img
-        src={imageUrl(background, 1920)}
-        srcSet={imageSrcSet(background, [640, 1280, 1920])}
-        sizes="100vw"
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 size-full object-cover"
-      />
-      <div className="absolute inset-0 bg-bark-950/75" />
+    <section className="bg-clay-600 text-cream-50">
+      <div className="bg-forest-900">
+        <Greca invertida />
+      </div>
 
-      <div className="container-page relative py-24 text-center sm:py-32">
-        <h2 className="mx-auto max-w-3xl font-display text-4xl leading-[1.1] text-cream-50 sm:text-5xl lg:text-6xl">
-          ¿Listo para disfrutar del rancho?
+      <div className="container-page py-20 lg:py-28">
+        <h2 className="max-w-4xl font-display text-5xl leading-[0.95] font-bold sm:text-6xl lg:text-7xl">
+          ¿Qué fecha tenés en mente?
         </h2>
-        <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-cream-50/75 sm:text-lg">
-          Contanos la fecha que tenés en mente y coordinamos todo para que solo te ocupés de
-          disfrutar.
-        </p>
 
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <button
-            onClick={() =>
-              document.getElementById('disponibilidad')?.scrollIntoView({ behavior: 'smooth' })
-            }
-            className="group inline-flex h-13 w-full items-center justify-center gap-2 rounded-full bg-clay-600 px-8 text-base font-medium text-cream-50 shadow-lift transition-all hover:bg-clay-700 active:scale-[0.98] sm:w-auto"
-          >
-            Consultar disponibilidad
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-
-          {ranch?.contact.whatsapp && (
+        {ranch.contact.whatsapp && (
+          <div className="mt-12">
+            <p className="rotulo text-cream-50">Escribinos por WhatsApp</p>
             <a
-              href={whatsappLink(
-                ranch.contact.whatsapp,
-                'Hola, quisiera consultar la disponibilidad del rancho.',
-              )}
+              href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar la disponibilidad del rancho.')}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-13 w-full items-center justify-center gap-2 rounded-full border border-cream-50/30 bg-cream-50/10 px-8 text-base font-medium text-cream-50 backdrop-blur-sm transition-all hover:bg-cream-50/20 active:scale-[0.98] sm:w-auto"
+              className="mt-2 inline-block font-mono text-5xl tracking-tight text-cream-50 underline decoration-cream-50/40 decoration-2 underline-offset-8 transition-[text-decoration-color] hover:decoration-cream-50 sm:text-7xl lg:text-8xl"
             >
-              <MessageCircle className="size-4" />
-              Escribir por WhatsApp
+              {ranch.contact.phone}
             </a>
-          )}
-        </div>
+          </div>
+        )}
+
+        <p className="mt-12 text-lg text-cream-50">
+          O mirá primero{' '}
+          <button
+            onClick={go}
+            className="font-semibold text-cream-50 underline decoration-2 underline-offset-4 hover:decoration-4"
+          >
+            qué fechas están libres
+          </button>
+          .
+        </p>
       </div>
     </section>
   )

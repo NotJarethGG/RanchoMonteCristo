@@ -12,12 +12,12 @@ class RanchSeeder extends Seeder
         Ranch::updateOrCreate(
             ['slug' => 'rancho-monte-cristo'],
             [
-                'name' => 'Rancho Monte Cristo',
-                'tagline' => 'Un lugar para crear momentos inolvidables',
-                'description' => 'Disfrutá de nuestro rancho para tus eventos, reuniones y momentos especiales.',
-                'about' => 'Rancho Monte Cristo es una finca privada en Nicoya, con zonas verdes amplias, '
-                    .'rancho techado y todas las comodidades para recibir a tu gente. '
-                    .'Alquilamos el lugar completo, sin compartirlo con otros grupos, para que tu evento sea realmente tuyo.',
+                'name' => 'Rancho Montecristo',
+                'tagline' => 'Un rancho entero, solo para tu gente.',
+                'description' => 'Alquilamos el Rancho Montecristo completo para cumpleaños, bodas, reuniones familiares y paseos. Ese día no hay otros grupos: el lugar es de ustedes.',
+                'about' => 'Es una finca privada a la salida de Nicoya, con un rancho techado grande, zonas verdes '
+                    .'para que los chiquitos corran y parqueo adentro de la propiedad. Se alquila completo y por '
+                    .'el día: llegan en la mañana, lo arreglan a su gusto y lo disfrutan hasta la noche.',
 
                 'phone' => '8934-3847',
                 'whatsapp' => '50689343847',

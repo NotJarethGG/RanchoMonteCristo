@@ -24,7 +24,7 @@ const BookingForm = lazy(() =>
 /** Reserva el espacio y el ancla `#reservar` mientras llega el formulario. */
 function BookingFormPlaceholder() {
   return (
-    <section id="reservar" className="section-y scroll-mt-24 bg-cream-50">
+    <section id="reservar" className="grano scroll-mt-20 bg-cream-50 py-20 lg:py-28">
       <div className="container-page flex min-h-[40rem] items-center justify-center">
         <Spinner className="size-6" />
       </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
 
   if (isError) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-cream-50">
+      <div className="grano flex min-h-dvh items-center justify-center bg-cream-50">
         <ErrorState message={normalizeError(error).message} onRetry={() => refetch()} />
       </div>
     )
@@ -48,15 +48,12 @@ export default function HomePage() {
 
   const gallery = data?.gallery ?? []
   const cover = gallery.find((image) => image.is_featured) ?? gallery[0]
-  // El cierre pide una toma amplia, no un primer plano: se prefiere paisaje.
-  const closing =
-    gallery.find((image) => image.category === 'areas-verdes') ?? gallery[gallery.length - 1]
 
   const goToForm = () =>
     document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
-    <div className="min-h-dvh bg-cream-50">
+    <div className="min-h-dvh bg-cream-50 text-forest-900">
       <PublicNavbar ranch={data?.ranch} />
 
       <main>
@@ -83,10 +80,10 @@ export default function HomePage() {
             </Suspense>
             <Location ranch={data.ranch} />
             <Testimonials testimonials={data.testimonials} />
-            <FinalCta ranch={data.ranch} image={closing} />
+            <FinalCta ranch={data.ranch} />
           </>
         ) : (
-          <div className="flex justify-center py-24" role="status" aria-label="Cargando">
+          <div className="grano flex justify-center bg-cream-50 py-24" role="status" aria-label="Cargando">
             <Spinner className="size-6" />
           </div>
         )}

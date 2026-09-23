@@ -22,6 +22,7 @@ export function Field({
   required,
   htmlFor,
   className,
+  labelClassName,
   children,
 }: {
   label?: string
@@ -30,12 +31,14 @@ export function Field({
   required?: boolean
   htmlFor?: string
   className?: string
+  /** Para variar el estilo de la etiqueta (el sitio público usa el suyo). */
+  labelClassName?: string
   children: ReactNode
 }) {
   return (
     <div className={cn('space-y-1.5', className)}>
       {label && (
-        <label htmlFor={htmlFor} className="block text-sm font-medium text-forest-800">
+        <label htmlFor={htmlFor} className={cn('block text-sm font-medium text-forest-800', labelClassName)}>
           {label}
           {required && <span className="ml-0.5 text-clay-600">*</span>}
         </label>

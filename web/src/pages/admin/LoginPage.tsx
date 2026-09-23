@@ -70,7 +70,7 @@ export default function LoginPage() {
             Panel administrativo
           </p>
           <h1 className="mt-4 max-w-md font-display text-4xl leading-tight text-cream-50">
-            Rancho Monte Cristo
+            Rancho Montecristo
           </h1>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream-50/70">
             Administrá reservas, clientes, pagos y el contenido del sitio desde un solo lugar.

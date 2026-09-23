@@ -1,69 +1,58 @@
-import { Quote, Star } from 'lucide-react'
-import { Card } from '@/components/ui/Card'
-import { cn } from '@/lib/cn'
-import { formatDate, initials } from '@/lib/format'
+import { formatDate } from '@/lib/format'
 import type { Testimonial } from '@/types'
 
+function Firma({ testimonial }: { testimonial: Testimonial }) {
+  return (
+    <p className="mt-5 text-sm">
+      <span className="font-semibold text-cream-50">{testimonial.author_name}</span>
+      <span className="font-mono text-gold-500">
+        {[testimonial.event_type, testimonial.event_date && formatDate(testimonial.event_date, 'MMM yyyy')]
+          .filter(Boolean)
+          .map((parte) => `  ·  ${parte}`)
+          .join('')}
+      </span>
+    </p>
+  )
+}
+
+/**
+ * Citas tipográficas sobre verde oscuro: la primera en grande y el resto en columnas.
+ * Sin estrellas ni avatares: el texto de la persona es lo que convence.
+ */
 export function Testimonials({ testimonials = [] }: { testimonials?: Testimonial[] }) {
   if (!testimonials.length) return null
+  const [principal, ...resto] = testimonials
 
   return (
-    <section className="section-y bg-forest-900">
+    <section className="bg-forest-900 py-20 text-cream-50 lg:py-28">
       <div className="container-page">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-500">
-            Testimonios
-          </p>
-          <h2 className="mt-4 font-display text-3xl leading-tight text-cream-50 sm:text-4xl lg:text-5xl">
-            Lo que dicen quienes ya celebraron acá
-          </h2>
-        </div>
+        <h2 className="titulo-seccion text-cream-50 after:bg-cream-50">Lo que nos han dicho</h2>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {testimonials.map((testimonial) => (
-            <Card
-              key={testimonial.id}
-              className="flex flex-col border-sage-200/12 bg-forest-800 p-6 shadow-none"
-            >
-              <Quote className="size-7 text-gold-500/50" strokeWidth={1.5} />
+        <figure className="mt-14 max-w-4xl">
+          <blockquote className="font-display text-3xl leading-snug font-bold sm:text-4xl lg:text-[2.75rem]">
+            <span aria-hidden="true" className="mr-1 text-gold-500">«</span>
+            {principal.content}
+            <span aria-hidden="true" className="ml-1 text-gold-500">»</span>
+          </blockquote>
+          <figcaption>
+            <Firma testimonial={principal} />
+          </figcaption>
+        </figure>
 
-              <p className="mt-4 flex-1 text-sm leading-relaxed text-sage-200">
-                {testimonial.content}
-              </p>
-
-              <div className="mt-6 flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <Star
-                    key={index}
-                    className={cn(
-                      'size-3.5',
-                      index < testimonial.rating
-                        ? 'fill-gold-500 text-gold-500'
-                        : 'text-sage-200/25',
-                    )}
-                  />
-                ))}
-              </div>
-
-              <div className="mt-5 flex items-center gap-3 border-t border-sage-200/12 pt-5">
-                <span aria-hidden="true"
-                  className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-xs font-semibold text-gold-300">
-                  {initials(testimonial.author_name)}
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-cream-50">
-                    {testimonial.author_name}
-                  </p>
-                  <p className="truncate text-xs text-sage-300">
-                    {[testimonial.event_type, testimonial.event_date && formatDate(testimonial.event_date, 'MMM yyyy')]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+        {!!resto.length && (
+          <div className="mt-16 grid gap-10 border-t-2 border-cream-50/25 pt-10 md:grid-cols-3">
+            {resto.map((testimonial) => (
+              <figure key={testimonial.id}>
+                <blockquote className="text-lg leading-relaxed text-cream-50/90">
+                  «{testimonial.content}»
+                </blockquote>
+                <figcaption>
+                  <Firma testimonial={testimonial} />
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

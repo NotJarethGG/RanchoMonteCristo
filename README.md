@@ -1,4 +1,4 @@
-# Rancho Monte Cristo
+# Rancho Montecristo
 
 Aplicación web para el alquiler del rancho: sitio público orientado a conversión
 y dashboard administrativo para gestionar reservas, clientes, pagos y contenido.

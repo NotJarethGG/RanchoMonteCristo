@@ -63,7 +63,7 @@ export default function CustomerDetailPage() {
               </div>
 
               <a
-                href={whatsappLink(customer.phone, `Hola ${customer.full_name}, le escribimos del Rancho Monte Cristo.`)}
+                href={whatsappLink(customer.phone, `Hola ${customer.full_name}, le escribimos del Rancho Montecristo.`)}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ok-600 px-4 py-2.5 text-sm font-medium text-white transition hover:brightness-110"

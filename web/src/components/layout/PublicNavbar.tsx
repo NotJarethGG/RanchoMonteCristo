@@ -1,18 +1,22 @@
 import { useState } from 'react'
-import { Menu, X, Phone } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { useIsScrolled, useScrollSpy } from '@/hooks/useScrollSpy'
 import { telLink } from '@/lib/format'
+import { useIsScrolled, useScrollSpy } from '@/hooks/useScrollSpy'
 import type { Ranch } from '@/types'
 
 const LINKS = [
-  { id: 'sobre-el-rancho', label: 'El rancho' },
-  { id: 'galeria', label: 'Galería' },
-  { id: 'servicios', label: 'Servicios' },
-  { id: 'disponibilidad', label: 'Disponibilidad' },
-  { id: 'ubicacion', label: 'Ubicación' },
+  { id: 'sobre-el-rancho', label: 'El lugar' },
+  { id: 'galeria', label: 'Fotos' },
+  { id: 'servicios', label: 'Lo que hay' },
+  { id: 'disponibilidad', label: 'Fechas' },
+  { id: 'ubicacion', label: 'Cómo llegar' },
 ]
 
+/**
+ * Franja superior sólida con el logo del rancho y el teléfono a la vista. No flota
+ * transparente sobre la foto: así el hero puede mostrar la imagen limpia.
+ */
 export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
   const [open, setOpen] = useState(false)
   const scrolled = useIsScrolled()
@@ -26,46 +30,31 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-0 z-40 transition-all duration-300',
-        scrolled
-          ? 'border-b border-forest-900/8 bg-cream-50/90 py-2.5 backdrop-blur-xl'
-          : 'border-b border-transparent py-5',
+        'grano sticky top-0 z-40 border-b-2 border-forest-900 bg-cream-50 transition-shadow',
+        scrolled && 'shadow-[0_2px_0_rgb(31_45_35/0.08)]',
       )}
     >
-      <nav className="container-page flex items-center justify-between gap-6">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-2.5 text-left"
-        >
-          <span
-            className={cn(
-              'flex size-9 items-center justify-center rounded-xl transition-colors',
-              scrolled ? 'bg-forest-800 text-gold-500' : 'bg-cream-50/15 text-cream-50 backdrop-blur-sm',
-            )}
-          >
-            <svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
-              <path d="M2 12 12 4l10 8v8a1 1 0 0 1-1 1h-6v-6H9v6H3a1 1 0 0 1-1-1z" />
-            </svg>
-          </span>
-          <span
-            className={cn(
-              'font-display text-lg leading-tight transition-colors',
-              scrolled ? 'text-forest-900' : 'text-cream-50',
-            )}
-          >
-            {ranch?.name ?? 'Rancho Monte Cristo'}
-          </span>
+      <nav className="container-page flex h-16 items-center justify-between gap-6 lg:h-20">
+        {/* Logo del rancho. El alto es fijo y el ancho proporcional (437×112
+            en origen), así no hay salto de diseño mientras carga. */}
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="shrink-0">
+          <img
+            src="/marca/logo-texto-oscuro.webp"
+            alt={`${ranch?.name ?? 'Rancho Montecristo'}, ir al inicio`}
+            width={437}
+            height={112}
+            className="h-10 w-auto lg:h-12"
+          />
         </button>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-7 lg:flex">
           {LINKS.map((link) => (
             <li key={link.id}>
               <button
                 onClick={() => go(link.id)}
                 className={cn(
-                  'relative rounded-full px-4 py-2 text-sm font-medium transition-colors',
-                  scrolled ? 'text-forest-800 hover:bg-forest-900/6' : 'text-cream-50/85 hover:text-cream-50',
-                  active === link.id && (scrolled ? 'text-clay-600' : 'text-gold-500'),
+                  'py-1 text-[15px] font-medium text-forest-900 underline-offset-[6px] transition-colors hover:text-clay-600',
+                  active === link.id && 'underline decoration-clay-600 decoration-2',
                 )}
               >
                 {link.label}
@@ -74,63 +63,51 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-6 lg:flex">
           {ranch?.contact.phone && (
-            <a
-              href={telLink(ranch.contact.phone)}
-              className={cn(
-                'inline-flex items-center gap-2 text-sm font-medium transition-colors',
-                scrolled ? 'text-forest-800 hover:text-clay-600' : 'text-cream-50/85 hover:text-cream-50',
-              )}
-            >
-              <Phone className="size-4" />
+            <a href={telLink(ranch.contact.phone)} className="font-mono text-sm text-forest-900 hover:text-clay-600">
               {ranch.contact.phone}
             </a>
           )}
-          <button
-            onClick={() => go('reservar')}
-            className="rounded-full bg-clay-600 px-5 py-2.5 text-sm font-medium text-cream-50 shadow-soft transition-all hover:bg-clay-700 hover:shadow-lift active:scale-[0.98]"
-          >
-            Reservar
+          <button onClick={() => go('reservar')} className="boton h-10 px-5 text-base">
+            Apartar fecha
           </button>
         </div>
 
         <button
           onClick={() => setOpen((value) => !value)}
-          aria-label="Abrir menú"
+          aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
           aria-expanded={open}
-          className={cn(
-            'rounded-full p-2 transition-colors lg:hidden',
-            scrolled ? 'text-forest-900 hover:bg-forest-900/6' : 'text-cream-50 hover:bg-cream-50/15',
-          )}
+          className="flex items-center gap-2 border-2 border-forest-900 px-3 py-1.5 font-mono text-xs tracking-[0.15em] text-forest-900 uppercase lg:hidden"
         >
-          {open ? <X className="size-6" /> : <Menu className="size-6" />}
+          {open ? <X className="size-4" aria-hidden="true" /> : <Menu className="size-4" aria-hidden="true" />}
+          Menú
         </button>
       </nav>
 
       {open && (
-        <div className="container-page mt-3 animate-fade-in lg:hidden">
-          <div className="overflow-hidden rounded-xl2 border border-forest-900/8 bg-cream-50 shadow-lift">
-            <ul className="divide-y divide-forest-900/6">
-              {LINKS.map((link) => (
-                <li key={link.id}>
-                  <button
-                    onClick={() => go(link.id)}
-                    className="w-full px-5 py-3.5 text-left text-sm font-medium text-forest-800 transition-colors hover:bg-sand-100"
-                  >
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <div className="border-t border-forest-900/6 p-4">
-              <button
-                onClick={() => go('reservar')}
-                className="w-full rounded-full bg-clay-600 py-3 text-sm font-medium text-cream-50"
-              >
-                Solicitar reserva
-              </button>
-            </div>
+        <div className="border-t-2 border-forest-900 bg-cream-50 lg:hidden">
+          <ul className="container-page divide-y divide-forest-900/15">
+            {LINKS.map((link) => (
+              <li key={link.id}>
+                <button
+                  onClick={() => go(link.id)}
+                  className="w-full py-4 text-left font-display text-2xl font-bold text-forest-900"
+                >
+                  {link.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <div className="container-page flex flex-col gap-3 border-t-2 border-forest-900 py-5">
+            <button onClick={() => go('reservar')} className="boton w-full">
+              Apartar fecha
+            </button>
+            {ranch?.contact.phone && (
+              <a href={telLink(ranch.contact.phone)} className="text-center font-mono text-sm text-forest-900">
+                o llamá al {ranch.contact.phone}
+              </a>
+            )}
           </div>
         </div>
       )}

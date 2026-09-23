@@ -56,7 +56,7 @@ export default function AdminLayout() {
           </svg>
         </span>
         <div className="min-w-0">
-          <p className="truncate font-display text-base text-cream-50">Monte Cristo</p>
+          <p className="truncate font-display text-base text-cream-50">Montecristo</p>
           <p className="text-[11px] uppercase tracking-[0.14em] text-sage-400">Administración</p>
         </div>
       </div>

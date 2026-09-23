@@ -82,3 +82,18 @@ export const initials = (name: string) =>
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join('')
+
+/** 10.132288, -85.464703 → «10°07′56″ N  85°27′53″ O» */
+export function coordenadas(lat: number | null | undefined, lng: number | null | undefined) {
+  if (lat == null || lng == null) return null
+
+  const dms = (valor: number) => {
+    const abs = Math.abs(valor)
+    const grados = Math.floor(abs)
+    const minutos = Math.floor((abs - grados) * 60)
+    const segundos = Math.round(((abs - grados) * 60 - minutos) * 60)
+    return `${grados}°${String(minutos).padStart(2, '0')}′${String(segundos).padStart(2, '0')}″`
+  }
+
+  return `${dms(lat)} ${lat >= 0 ? 'N' : 'S'}  ${dms(lng)} ${lng >= 0 ? 'E' : 'O'}`
+}

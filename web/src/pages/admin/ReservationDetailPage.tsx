@@ -216,7 +216,7 @@ export default function ReservationDetailPage() {
               <div className="flex gap-2 pt-2">
                 {customer?.phone && (
                   <a
-                    href={whatsappLink(customer.phone, `Hola ${customer.full_name}, le escribimos del Rancho Monte Cristo sobre su reserva ${reservation.code}.`)}
+                    href={whatsappLink(customer.phone, `Hola ${customer.full_name}, le escribimos del Rancho Montecristo sobre su reserva ${reservation.code}.`)}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ok-600 px-4 py-2 text-xs font-medium text-white transition hover:brightness-110"

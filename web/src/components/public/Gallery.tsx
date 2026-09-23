@@ -1,14 +1,37 @@
 import { useMemo, useState } from 'react'
-import { ChevronLeft, ChevronRight, Expand } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { cn } from '@/lib/cn'
 import { imageSrcSet, imageUrl } from '@/lib/image'
 import type { GalleryImage } from '@/types'
 
+/** Las categorías se guardan como slug; acá se muestran con tildes. */
+const NOMBRES: Record<string, string> = {
+  'areas-verdes': 'Áreas verdes',
+  rancho: 'Rancho',
+  eventos: 'Eventos',
+  parrilla: 'Parrilla',
+  cocina: 'Cocina',
+}
+const nombre = (slug: string) =>
+  NOMBRES[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
+
+/*
+ * Composición en ciclos de cinco fotos sobre 12 columnas: una grande con una
+ * cuadrada al lado, y debajo tres iguales. Las proporciones están elegidas
+ * para que las dos de arriba queden casi a la misma altura.
+ */
+const DISPOSICION = [
+  { span: 'lg:col-span-7', aspecto: 'aspect-[4/3]', ancho: '(min-width: 1024px) 58vw, 100vw', anchos: [640, 960, 1280] },
+  { span: 'lg:col-span-5', aspecto: 'aspect-square', ancho: '(min-width: 1024px) 42vw, 50vw', anchos: [480, 800, 1000] },
+  { span: 'lg:col-span-4', aspecto: 'aspect-[4/3]', ancho: '(min-width: 1024px) 33vw, 50vw', anchos: [400, 640, 800] },
+  { span: 'lg:col-span-4', aspecto: 'aspect-[4/3]', ancho: '(min-width: 1024px) 33vw, 50vw', anchos: [400, 640, 800] },
+  { span: 'lg:col-span-4', aspecto: 'aspect-[4/3]', ancho: '(min-width: 1024px) 33vw, 50vw', anchos: [400, 640, 800] },
+]
+
 /**
- * Mosaico editorial: la primera imagen ocupa el doble de espacio para
- * romper la retícula y que la galería no se sienta un grid genérico.
- * Al abrir una imagen se puede navegar con flechas y teclado.
+ * Álbum impreso: cada foto con su pie numerado siempre visible, en lugar de
+ * títulos que aparecen al pasar el mouse (que en el celular nunca se ven).
  */
 export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
@@ -33,74 +56,65 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   if (!images.length) return null
 
   return (
-    <section id="galeria" className="section-y scroll-mt-24 bg-sand-100">
+    <section id="galeria" className="grano scroll-mt-20 bg-sand-100 py-20 lg:py-28">
       <div className="container-page">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="eyebrow">Galería</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight text-forest-900 sm:text-4xl lg:text-5xl">
-              Conocé el lugar antes de venir
-            </h2>
-          </div>
+        <h2 className="titulo-seccion">Así se ve</h2>
 
+        <div className="mt-8 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-4">
           {categories.length > 2 && (
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => {
-                    setFilter(category)
-                    setOpenIndex(null)
-                  }}
-                  className={cn(
-                    'rounded-full border px-4 py-1.5 text-xs font-medium transition-colors first-letter:uppercase',
-                    filter === category
-                      ? 'border-forest-800 bg-forest-800 text-cream-50'
-                      : 'border-forest-900/12 text-forest-800 hover:border-forest-900/30',
-                  )}
-                >
-                  {category.replace(/-/g, ' ')}
-                </button>
+            <ul className="flex flex-wrap items-baseline gap-x-1 gap-y-2 text-[15px]" aria-label="Filtrar fotos">
+              {categories.map((category, index) => (
+                <li key={category} className="flex items-baseline">
+                  {index > 0 && <span aria-hidden="true" className="mx-2 text-forest-900/30">/</span>}
+                  <button
+                    onClick={() => {
+                      setFilter(category)
+                      setOpenIndex(null)
+                    }}
+                    aria-pressed={filter === category}
+                    className={cn(
+                      'font-medium text-forest-900 underline-offset-4 hover:text-clay-600',
+                      filter === category && 'underline decoration-clay-600 decoration-2',
+                    )}
+                  >
+                    {category === 'todas' ? 'Todas' : nombre(category)}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
+          <p className="rotulo text-stone-600">Tocá una foto para verla en grande</p>
         </div>
 
-        <div className="mt-10 grid auto-rows-[190px] grid-cols-2 gap-3 sm:auto-rows-[220px] lg:grid-cols-4 lg:gap-4">
-          {visible.map((image, index) => (
-            <button
-              key={image.id}
-              onClick={() => setOpenIndex(index)}
-              aria-label={`Ampliar foto: ${image.title ?? image.alt ?? 'rancho'}`}
-              className={cn(
-                'group relative overflow-hidden rounded-xl2 bg-sand-200 shadow-soft transition-shadow hover:shadow-lift',
-                index === 0 && 'col-span-2 row-span-2',
-              )}
-            >
-              {/* Miniatura al ancho real en que se muestra: la primera ocupa
-                  media pantalla en escritorio, el resto un cuarto. */}
-              <img
-                src={imageUrl(image.url, index === 0 ? 1200 : 600)}
-                srcSet={imageSrcSet(image.url, index === 0 ? [640, 960, 1280] : [320, 480, 640, 800])}
-                sizes={index === 0 ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, 50vw'}
-                alt={image.alt ?? image.title ?? 'Fotografía del rancho'}
-                loading={index < 3 ? 'eager' : 'lazy'}
-                decoding="async"
-                className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <span className="absolute inset-0 bg-linear-to-t from-bark-950/75 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-              <span className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-cream-50/90 text-forest-900 opacity-0 transition-opacity group-hover:opacity-100">
-                <Expand className="size-3.5" aria-hidden="true" />
-              </span>
-
-              {image.title && (
-                <span aria-hidden="true" className="absolute inset-x-0 bottom-0 translate-y-2 p-4 text-left text-sm font-medium text-cream-50 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {image.title}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-12">
+          {visible.map((image, index) => {
+            const d = DISPOSICION[index % DISPOSICION.length]
+            return (
+              <figure key={image.id} className={cn(index % 5 === 0 ? 'col-span-2' : 'col-span-1', d.span)}>
+                <button
+                  onClick={() => setOpenIndex(index)}
+                  aria-label={`Ampliar foto: ${image.title ?? image.alt ?? 'rancho'}`}
+                  className={cn('group block w-full overflow-hidden bg-forest-900', d.aspecto)}
+                >
+                  <img
+                    src={imageUrl(image.url, d.anchos[1])}
+                    srcSet={imageSrcSet(image.url, d.anchos)}
+                    sizes={d.ancho}
+                    alt={image.alt ?? image.title ?? 'Fotografía del rancho'}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    className="size-full object-cover transition-[filter] duration-300 group-hover:brightness-110"
+                  />
+                </button>
+                {image.title && (
+                  <figcaption className="mt-3 flex items-baseline gap-3 text-sm text-forest-900">
+                    <span className="font-mono text-clay-600">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{image.title}</span>
+                  </figcaption>
+                )}
+              </figure>
+            )
+          })}
         </div>
       </div>
 
@@ -112,35 +126,35 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
               srcSet={imageSrcSet(current.url, [960, 1600, 2400])}
               sizes="(min-width: 1152px) 1152px, 100vw"
               alt={current.alt ?? current.title ?? ''}
-              className="max-h-[78vh] w-full rounded-xl2 object-contain"
+              className="max-h-[78vh] w-full object-contain"
             />
 
-            <figcaption className="mt-4 flex items-center justify-between gap-4 text-cream-50">
-              <div className="min-w-0">
-                <p className="font-display text-lg">{current.title}</p>
-                {current.caption && <p className="text-sm text-cream-50/70">{current.caption}</p>}
-              </div>
-              <p className="shrink-0 text-sm text-cream-50/60">
-                {(openIndex ?? 0) + 1} / {visible.length}
+            <figcaption className="mt-4 flex items-baseline justify-between gap-4 text-cream-50">
+              <p className="flex items-baseline gap-3">
+                <span className="font-mono text-gold-500">{String((openIndex ?? 0) + 1).padStart(2, '0')}</span>
+                <span className="font-display text-xl font-bold">{current.title}</span>
+              </p>
+              <p className="rotulo shrink-0 text-cream-50/70">
+                {(openIndex ?? 0) + 1} de {visible.length}
               </p>
             </figcaption>
 
             {visible.length > 1 && (
               <>
                 {[
-                  { dir: -1, Icon: ChevronLeft, side: 'left-3', label: 'Anterior' },
-                  { dir: 1, Icon: ChevronRight, side: 'right-3', label: 'Siguiente' },
+                  { dir: -1, Icon: ChevronLeft, side: 'left-3', label: 'Foto anterior' },
+                  { dir: 1, Icon: ChevronRight, side: 'right-3', label: 'Foto siguiente' },
                 ].map(({ dir, Icon, side, label }) => (
                   <button
                     key={label}
                     aria-label={label}
                     onClick={() => move(dir)}
                     className={cn(
-                      'absolute top-1/2 -translate-y-1/2 rounded-full bg-cream-50/90 p-2.5 text-forest-900 shadow-lift transition hover:bg-cream-50',
+                      'absolute top-1/2 -translate-y-1/2 border-2 border-forest-900 bg-cream-50 p-2 text-forest-900 transition hover:bg-sand-100',
                       side,
                     )}
                   >
-                    <Icon className="size-5" />
+                    <Icon className="size-5" aria-hidden="true" />
                   </button>
                 ))}
               </>

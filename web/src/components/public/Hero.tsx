@@ -1,129 +1,110 @@
 import { useState } from 'react'
-import { ArrowRight, Images, MapPin, Users } from 'lucide-react'
+import { Greca } from '@/components/brand/Greca'
 import { cn } from '@/lib/cn'
+import { coordenadas, whatsappLink } from '@/lib/format'
 import { imageSrcSet, imageUrl } from '@/lib/image'
 import type { GalleryImage, Ranch } from '@/types'
 
 const FALLBACK =
   'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=80'
 
-const DEFAULT_TAGLINE = 'Un lugar para crear momentos inolvidables'
+// Mismos valores que tiene la base: se muestran mientras responde la API para
+// que el titular pinte de inmediato (es el elemento del LCP).
+const DEFAULT_TAGLINE = 'Un rancho entero, solo para tu gente.'
 const DEFAULT_DESCRIPTION =
-  'Disfrutá de nuestro rancho para tus eventos, reuniones y momentos especiales.'
+  'Alquilamos el Rancho Montecristo completo para cumpleaños, bodas, reuniones familiares y paseos. Ese día no hay otros grupos: el lugar es de ustedes.'
 
 interface HeroProps {
   ranch?: Ranch
   cover?: GalleryImage
-  /**
-   * Mientras la API responde, el hero se pinta igual —marca, titular y
-   * llamados a la acción— y solo espera la foto. Así el visitante no mira un
-   * spinner (en el plan gratuito de Render el primer arranque tarda).
-   */
+  /** Sin datos todavía: se pinta todo menos la foto. */
   loading?: boolean
 }
 
 /**
- * El hero le da todo el protagonismo a la fotografía: imagen a sangre,
- * degradado oscuro para garantizar contraste del texto y un par de datos
- * duros (capacidad / modalidad) que responden la primera pregunta del visitante.
+ * Foto a sangre con el titular encima, abajo a la izquierda. El velo es
+ * responsivo: parejo en móvil, donde el texto ocupa todo el ancho, y en
+ * degradado horizontal desde `sm`, para que la mitad derecha de la foto se
+ * vea limpia.
  */
 export function Hero({ ranch, cover, loading = false }: HeroProps) {
   const [imageReady, setImageReady] = useState(false)
   const image = loading ? null : (cover?.url ?? ranch?.hero_image ?? FALLBACK)
-  const place = [ranch?.location.city, ranch?.location.province].filter(Boolean).join(', ')
+  const lugar = ranch
+    ? [ranch.location.city, ranch.location.province].filter(Boolean).join(' · ')
+    : 'Nicoya · Guanacaste'
+  const coords = ranch ? coordenadas(ranch.location.latitude, ranch.location.longitude) : null
 
   const go = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
-    <section className="relative flex min-h-[92svh] items-end overflow-hidden bg-bark-950">
-      {/* El titular se alinea a la izquierda, así que la foto se corre hacia
-          la derecha para que su motivo no quede detrás del texto. El zoom
-          anclado a la izquierda es lo que genera ese margen: con `object-cover`
-          a secas la imagen calza justo y `object-position` no tiene efecto. */}
-      {image && (
-        <img
-          src={imageUrl(image, 1920)}
-          srcSet={imageSrcSet(image, [640, 960, 1280, 1920, 2560])}
-          sizes="100vw"
-          alt={cover?.alt ?? 'Vista del rancho'}
-          fetchPriority="high"
-          decoding="async"
-          ref={(el) => {
-            // Si viene de caché, `onLoad` puede dispararse antes de enganchar.
-            if (el?.complete) setImageReady(true)
-          }}
-          onLoad={() => setImageReady(true)}
-          className={cn(
-            'absolute inset-0 size-full origin-left scale-100 object-cover object-center transition-opacity duration-700 lg:scale-110',
-            imageReady ? 'opacity-100' : 'opacity-0',
-          )}
-        />
-      )}
+    <section>
+      <div className="relative flex min-h-[calc(100svh-4rem)] items-end overflow-hidden bg-forest-900 lg:min-h-[calc(100svh-5rem)]">
+        {/* El titular va a la izquierda: el zoom anclado a la izquierda corre
+            la foto hacia la derecha para que su motivo no quede detrás. */}
+        {image && (
+          <img
+            src={imageUrl(image, 1920)}
+            srcSet={imageSrcSet(image, [640, 960, 1280, 1920, 2560])}
+            sizes="100vw"
+            alt={cover?.alt ?? 'Vista del rancho'}
+            fetchPriority="high"
+            decoding="async"
+            ref={(el) => {
+              // Si viene de caché, `onLoad` puede dispararse antes de enganchar.
+              if (el?.complete) setImageReady(true)
+            }}
+            onLoad={() => setImageReady(true)}
+            className={cn(
+              'absolute inset-0 size-full origin-left object-cover transition-opacity duration-700 lg:scale-110',
+              imageReady ? 'opacity-100' : 'opacity-0',
+            )}
+          />
+        )}
 
-      {/* El velo es responsivo. En móvil el texto ocupa todo el ancho, así que
-          se usa una capa pareja; desde `sm` el texto vive a la izquierda y el
-          degradado horizontal le da contraste sin apagar el resto de la foto. */}
-      <div className="absolute inset-0 bg-bark-950/72 sm:bg-transparent sm:bg-linear-to-r sm:from-bark-950/92 sm:via-bark-950/60 sm:to-bark-950/15" />
-      <div className="absolute inset-0 bg-linear-to-t from-bark-950/85 via-bark-950/20 to-bark-950/45 sm:via-transparent sm:to-bark-950/40" />
+        <div className="absolute inset-0 bg-bark-950/72 sm:bg-transparent sm:bg-linear-to-r sm:from-bark-950/92 sm:via-bark-950/60 sm:to-bark-950/15" />
+        <div className="absolute inset-0 bg-linear-to-t from-bark-950/85 via-bark-950/20 to-bark-950/45 sm:via-transparent sm:to-bark-950/40" />
 
-      <div className="container-page relative w-full pb-16 pt-32 sm:pb-20 lg:pb-24">
-        <div className="max-w-3xl animate-fade-up">
-          {/* «Rancho para eventos» aparece siempre: dice qué es el sitio en el
-              primer vistazo y aporta la palabra clave que el titular no tiene. */}
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-cream-50/20 bg-cream-50/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-cream-50/90 backdrop-blur-sm">
-            <span className="size-1.5 rounded-full bg-gold-500" aria-hidden="true" />
-            Rancho para eventos
-            {place && <span className="text-cream-50/60">· {place}</span>}
+        {/* Pie de foto con coordenadas, como la etiqueta de una foto de archivo. */}
+        {(cover?.title || coords) && (
+          <p className="rotulo absolute top-5 right-5 hidden max-w-[55%] text-right text-cream-50/80 sm:block">
+            {[cover?.title, coords].filter(Boolean).join('  ·  ')}
           </p>
+        )}
 
-          {/* El titular se muestra desde el primer pintado, con los textos por
-              defecto si la API todavía no respondió (son los mismos que tiene
-              la base). Ocultarlo hasta tener datos retrasaba el LCP entero
-              hasta la respuesta de la API. */}
-          <div>
-            <h1 className="font-display text-4xl leading-[1.05] font-normal text-cream-50 sm:text-6xl lg:text-7xl">
+        <div className="container-page relative w-full pt-28 pb-14 sm:pb-20 lg:pb-24">
+          <div className="max-w-3xl">
+            <p className="rotulo text-gold-500">{lugar} · Costa Rica</p>
+
+            <h1 className="mt-5 font-display text-[2.75rem] leading-[0.95] font-bold text-cream-50 sm:text-6xl lg:text-7xl">
               {ranch?.tagline ?? DEFAULT_TAGLINE}
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-cream-50/80 sm:text-lg">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream-50/85">
               {ranch?.description ?? DEFAULT_DESCRIPTION}
             </p>
-          </div>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={() => go('disponibilidad')}
-              className="group inline-flex h-13 items-center justify-center gap-2 rounded-full bg-clay-600 px-8 text-base font-medium text-cream-50 shadow-lift transition-all hover:bg-clay-700 active:scale-[0.98]"
-            >
-              Consultar disponibilidad
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-            </button>
-            <button
-              onClick={() => go('galeria')}
-              className="inline-flex h-13 items-center justify-center gap-2 rounded-full border border-cream-50/30 bg-cream-50/10 px-8 text-base font-medium text-cream-50 backdrop-blur-sm transition-all hover:bg-cream-50/20 active:scale-[0.98]"
-            >
-              <Images className="size-4" aria-hidden="true" />
-              Ver galería
-            </button>
+            <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <button onClick={() => go('disponibilidad')} className="boton">
+                Ver fechas libres
+              </button>
+              {ranch?.contact.whatsapp && (
+                <a
+                  href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar por una fecha en el rancho.')}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="enlace text-cream-50 decoration-gold-500"
+                >
+                  o escribinos al {ranch.contact.phone}
+                </a>
+              )}
+            </div>
           </div>
-
-          <ul className="mt-12 flex flex-wrap gap-x-10 gap-y-5 border-t border-cream-50/15 pt-7">
-            {[
-              { icon: Users, label: 'Capacidad', value: `Hasta ${ranch?.capacity ?? 120} personas` },
-              { icon: MapPin, label: 'Modalidad', value: 'Alquiler del lugar completo' },
-            ].map(({ icon: Icon, label, value }) => (
-              <li key={label} className="flex items-center gap-3">
-                <Icon className="size-5 text-gold-500" strokeWidth={1.5} aria-hidden="true" />
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-cream-50/60">{label}</p>
-                  <p className="text-sm font-medium text-cream-50">{value}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
+
+      <Greca />
     </section>
   )
 }

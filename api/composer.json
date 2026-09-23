@@ -1,7 +1,7 @@
 {
     "name": "montecristo/api",
     "type": "project",
-    "description": "API REST del Rancho Monte Cristo",
+    "description": "API REST del Rancho Montecristo",
     "keywords": ["laravel", "api", "rancho", "reservas"],
     "license": "MIT",
     "require": {

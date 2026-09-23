@@ -1,6 +1,4 @@
-import { Clock, ExternalLink, MapPin, Navigation } from 'lucide-react'
-import { Card } from '@/components/ui/Card'
-import { ButtonAnchor } from '@/components/ui/Button'
+import { coordenadas } from '@/lib/format'
 import type { Ranch } from '@/types'
 
 /**
@@ -18,87 +16,77 @@ function mapSrc(lat: number, lng: number) {
   return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`
 }
 
-export function Location({ ranch }: { ranch?: Ranch }) {
-  const { latitude, longitude } = ranch?.location ?? {}
+/**
+ * El mapa enmarcado como una hoja de carta topográfica, con las coordenadas
+ * en el margen. En zona rural no hay nombres de calle: la dirección con su
+ * Plus Code y el botón a Maps son lo que de verdad sirve para llegar.
+ */
+export function Location({ ranch }: { ranch: Ranch }) {
+  const { latitude, longitude } = ranch.location
   const hasCoords = typeof latitude === 'number' && typeof longitude === 'number'
+  const coords = coordenadas(latitude, longitude)
+  const lugar = [ranch.location.city, ranch.location.province].filter(Boolean).join(', ')
 
   return (
-    <section id="ubicacion" className="section-y scroll-mt-24 bg-sand-100">
+    <section id="ubicacion" className="grano scroll-mt-20 bg-sand-100 py-20 lg:py-28">
       <div className="container-page">
-        <div className="max-w-2xl">
-          <p className="eyebrow">Ubicación</p>
-          <h2 className="mt-4 font-display text-3xl leading-tight text-forest-900 sm:text-4xl lg:text-5xl">
-            Cómo llegar
-          </h2>
-        </div>
+        <h2 className="titulo-seccion">Cómo llegar</h2>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-          <Card className="overflow-hidden p-0">
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
+          <figure className="border-2 border-forest-900 bg-cream-50">
+            <figcaption className="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b-2 border-forest-900 px-4 py-2.5">
+              <span className="rotulo text-forest-900">{lugar}</span>
+              {coords && <span className="rotulo text-stone-600">{coords}</span>}
+            </figcaption>
             {hasCoords ? (
               <iframe
-                title={`Mapa de ${ranch?.name}`}
+                title={`Mapa de la ubicación de ${ranch.name}`}
                 src={mapSrc(latitude!, longitude!)}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="h-80 w-full border-0 sm:h-[26rem] lg:h-full lg:min-h-[26rem]"
+                className="block h-80 w-full border-0 sm:h-[26rem]"
               />
             ) : (
               <div className="flex h-80 items-center justify-center text-sm text-stone-600">
-                Ubicación pendiente de configurar.
+                La ubicación todavía no está configurada.
               </div>
             )}
-          </Card>
+          </figure>
 
-          <div className="space-y-4">
-            <Card className="p-6">
-              <div className="flex gap-3.5">
-                <MapPin className="mt-0.5 size-5 shrink-0 text-clay-600" strokeWidth={1.5} />
-                <div>
-                  <h3 className="font-display text-lg text-forest-900">Dirección</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-stone-600">
-                    {ranch?.location.address}
-                    <br />
-                    {[ranch?.location.city, ranch?.location.province].filter(Boolean).join(', ')}
-                  </p>
-                </div>
-              </div>
+          <div className="flex flex-col gap-10">
+            <div>
+              <h3 className="rotulo text-stone-600">Dirección</h3>
+              <p className="mt-3 font-display text-2xl leading-snug font-bold text-forest-900">
+                {ranch.location.address}
+              </p>
+              <p className="mt-1 text-lg text-stone-600">{lugar}</p>
 
-              {ranch?.location.google_maps_url && (
-                <ButtonAnchor
+              {ranch.location.google_maps_url && (
+                <a
                   href={ranch.location.google_maps_url}
                   target="_blank"
                   rel="noreferrer"
-                  variant="outline"
-                  size="sm"
-                  className="mt-5 w-full"
-                  icon={<Navigation className="size-4" />}
+                  className="boton mt-6"
                 >
                   Abrir en Maps
-                  <ExternalLink className="size-3.5 opacity-60" />
-                </ButtonAnchor>
+                </a>
               )}
-            </Card>
+            </div>
 
-            {!!ranch?.schedule?.length && (
-              <Card className="p-6">
-                <div className="flex gap-3.5">
-                  <Clock className="mt-0.5 size-5 shrink-0 text-clay-600" strokeWidth={1.5} />
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-lg text-forest-900">Horarios</h3>
-                    <ul className="mt-3 space-y-2">
-                      {ranch.schedule.map((item) => (
-                        <li
-                          key={item.day}
-                          className="flex flex-wrap justify-between gap-2 text-sm text-stone-600"
-                        >
-                          <span>{item.day}</span>
-                          <span className="font-medium text-forest-800">{item.hours}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </Card>
+            {!!ranch.schedule?.length && (
+              <div>
+                <h3 className="rotulo text-stone-600">Horarios</h3>
+                <dl className="mt-3">
+                  {ranch.schedule.map((item) => (
+                    <div key={item.day} className="flex items-baseline gap-3 border-b border-dashed border-forest-900/30 py-3">
+                      <dt className="flex flex-1 items-baseline gap-3 text-forest-900 after:min-w-4 after:flex-1 after:translate-y-[-3px] after:border-b-2 after:border-dotted after:border-forest-900/30 after:content-['']">
+                        {item.day}
+                      </dt>
+                      <dd className="font-mono text-sm text-forest-900">{item.hours}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             )}
           </div>
         </div>

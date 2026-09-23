@@ -1,68 +1,79 @@
-import { CalendarHeart, LayoutGrid, MapPin, Users } from 'lucide-react'
-import { Card } from '@/components/ui/Card'
+import { formatTime } from '@/lib/format'
 import type { Ranch } from '@/types'
 
-export function About({ ranch }: { ranch?: Ranch }) {
-  const cards = [
+/**
+ * El texto del propietario a la izquierda y, a la derecha, una ficha con los
+ * datos duros: la clase de tabla que uno encuentra en el tablero de una
+ * finca, no cuatro tarjetas con íconos. Todo sale de la configuración.
+ */
+export function About({ ranch }: { ranch: Ranch }) {
+  const horario =
+    ranch.check_in_time && ranch.check_out_time
+      ? `${formatTime(ranch.check_in_time)} a ${formatTime(ranch.check_out_time)}`
+      : null
+
+  const filas = [
+    { dato: 'Capacidad', valor: ranch.capacity ? `hasta ${ranch.capacity} personas` : null },
+    { dato: 'Horario', valor: horario },
+    { dato: 'Modalidad', valor: 'completo, un grupo por día' },
     {
-      icon: Users,
-      title: 'Capacidad',
-      value: `Hasta ${ranch?.capacity ?? 120} personas`,
-      detail: 'Espacio cómodo para grupos grandes sin sentirse apretados.',
+      dato: 'Ubicación',
+      valor: [ranch.location.city, ranch.location.province].filter(Boolean).join(', ') || null,
     },
-    {
-      icon: MapPin,
-      title: 'Ubicación',
-      value: [ranch?.location.city, ranch?.location.province].filter(Boolean).join(', ') || '—',
-      detail: ranch?.location.address ?? 'Acceso directo en vehículo hasta la propiedad.',
-    },
-    {
-      icon: CalendarHeart,
-      title: 'Tipo de eventos',
-      value: `${ranch?.event_types?.length ?? 0} tipos de evento`,
-      detail: (ranch?.event_types ?? []).slice(0, 4).join(' · ') || '—',
-    },
-    {
-      icon: LayoutGrid,
-      title: 'Áreas disponibles',
-      value: `${ranch?.areas?.length ?? 0} áreas`,
-      detail: (ranch?.areas ?? []).slice(0, 4).join(' · ') || '—',
-    },
-  ]
+  ].filter((fila): fila is { dato: string; valor: string } => Boolean(fila.valor))
 
   return (
-    <section id="sobre-el-rancho" className="section-y scroll-mt-24 bg-cream-50">
+    <section id="sobre-el-rancho" className="grano scroll-mt-20 bg-cream-50 py-20 lg:py-28">
       <div className="container-page">
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-          <div>
-            <p className="eyebrow">Sobre el rancho</p>
-            <h2 className="mt-4 font-display text-3xl leading-tight text-forest-900 sm:text-4xl lg:text-5xl">
-              Una finca privada, pensada para recibir a tu gente
-            </h2>
-          </div>
+        <h2 className="titulo-seccion">El lugar</h2>
 
-          <div className="space-y-5 text-base leading-relaxed text-stone-700">
-            <p>{ranch?.about}</p>
-            {ranch?.check_in_time && ranch?.check_out_time && (
-              <p className="text-sm text-stone-600">
-                El alquiler corre de {ranch.check_in_time.slice(0, 5)} a{' '}
-                {ranch.check_out_time.slice(0, 5)} y se coordina la hora final según el tipo de evento.
+        <div className="mt-12 grid gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-20">
+          <div>
+            {ranch.about && (
+              <p className="font-display text-2xl leading-snug text-forest-900 sm:text-[1.7rem]">
+                {ranch.about}
               </p>
             )}
-          </div>
-        </div>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
-          {cards.map(({ icon: Icon, title, value, detail }) => (
-            <Card key={title} interactive className="p-6">
-              <div className="mb-5 flex size-11 items-center justify-center rounded-xl bg-sage-100 text-forest-700">
-                <Icon className="size-5" strokeWidth={1.5} />
+            {!!ranch.event_types.length && (
+              <div className="mt-10">
+                <p className="rotulo text-stone-600">Se usa para</p>
+                <p className="mt-3 text-lg leading-relaxed text-forest-900">
+                  {ranch.event_types.join(' / ')}
+                </p>
               </div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-clay-600">{title}</p>
-              <p className="mt-2 font-display text-xl text-forest-900">{value}</p>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600">{detail}</p>
-            </Card>
-          ))}
+            )}
+          </div>
+
+          <div className="border-2 border-forest-900 bg-sand-100/60">
+            <p className="rotulo border-b-2 border-forest-900 px-5 py-3 text-forest-900">Ficha del rancho</p>
+
+            <dl className="px-5 py-2">
+              {filas.map((fila) => (
+                <div key={fila.dato} className="flex items-baseline gap-3 border-b border-dashed border-forest-900/30 py-4 last:border-0">
+                  {/* Los puntos guía van como pseudo-elemento: un <span> suelto
+                      dentro del <dl> invalidaría su estructura. */}
+                  <dt className="flex flex-1 items-baseline gap-3 text-sm font-semibold text-forest-900 after:min-w-6 after:flex-1 after:translate-y-[-3px] after:border-b-2 after:border-dotted after:border-forest-900/35 after:content-['']">
+                    {fila.dato}
+                  </dt>
+                  <dd className="text-right font-mono text-sm text-forest-900">{fila.valor}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {!!ranch.areas.length && (
+              <div className="border-t-2 border-forest-900 px-5 py-4">
+                <p className="rotulo text-stone-600">Áreas</p>
+                <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-forest-900">
+                  {ranch.areas.map((area) => (
+                    <li key={area} className="before:mr-1.5 before:text-clay-600 before:content-['▪']">
+                      {area}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
