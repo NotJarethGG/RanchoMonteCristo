@@ -3,13 +3,10 @@ import { format, addMonths, startOfMonth, endOfMonth } from 'date-fns'
 import { qk } from '@/lib/queryClient'
 import { publicService, type ReservationRequestInput } from '@/services/public.service'
 import { normalizeError } from '@/lib/api'
+import { landingQuery, readCachedLanding } from '@/lib/landingQuery'
 
 export function useLanding() {
-  return useQuery({
-    queryKey: qk.landing,
-    queryFn: publicService.landing,
-    staleTime: 5 * 60_000,
-  })
+  return useQuery({ ...landingQuery, placeholderData: readCachedLanding })
 }
 
 /** Trae el mes visible más el siguiente, para que navegar se sienta instantáneo. */

@@ -2,8 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
-import { qk, queryClient } from '@/lib/queryClient'
-import { publicService } from '@/services/public.service'
+import { queryClient } from '@/lib/queryClient'
+import { landingQuery } from '@/lib/landingQuery'
 import { AuthProvider } from '@/hooks/useAuth'
 import App from './App'
 import './index.css'
@@ -13,7 +13,7 @@ import './index.css'
 // terminaba de cargar y montarse: una ida y vuelta más antes de poder mostrar
 // la foto principal (era la mayor parte del LCP).
 if (window.location.pathname === '/') {
-  void queryClient.prefetchQuery({ queryKey: qk.landing, queryFn: publicService.landing })
+  void queryClient.prefetchQuery(landingQuery)
 }
 
 createRoot(document.getElementById('root')!).render(

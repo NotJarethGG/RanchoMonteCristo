@@ -15,10 +15,9 @@ interface HeroProps {
   ranch?: Ranch
   cover?: GalleryImage
   /**
-   * Mientras la API responde, el hero se pinta igual: marca, llamados a la
-   * acción y espacio reservado para el texto. Así el visitante no mira un
-   * spinner (en el plan gratuito de Render el primer arranque tarda), y no
-   * hay salto de contenido cuando llegan los datos reales.
+   * Mientras la API responde, el hero se pinta igual —marca, titular y
+   * llamados a la acción— y solo espera la foto. Así el visitante no mira un
+   * spinner (en el plan gratuito de Render el primer arranque tarda).
    */
   loading?: boolean
 }
@@ -78,7 +77,11 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
             {place && <span className="text-cream-50/60">· {place}</span>}
           </p>
 
-          <div className={cn('transition-opacity duration-500', loading ? 'opacity-0' : 'opacity-100')}>
+          {/* El titular se muestra desde el primer pintado, con los textos por
+              defecto si la API todavía no respondió (son los mismos que tiene
+              la base). Ocultarlo hasta tener datos retrasaba el LCP entero
+              hasta la respuesta de la API. */}
+          <div>
             <h1 className="font-display text-4xl leading-[1.05] font-normal text-cream-50 sm:text-6xl lg:text-7xl">
               {ranch?.tagline ?? DEFAULT_TAGLINE}
             </h1>
