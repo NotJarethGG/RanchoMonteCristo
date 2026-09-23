@@ -53,8 +53,8 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
               <button
                 onClick={() => go(link.id)}
                 className={cn(
-                  'py-1 text-[15px] font-medium text-forest-900 underline-offset-[6px] transition-colors hover:text-clay-600',
-                  active === link.id && 'underline decoration-clay-600 decoration-2',
+                  'py-1 text-[15px] font-medium text-forest-900 underline-offset-[6px] transition-colors hover:text-moss-600',
+                  active === link.id && 'underline decoration-gold-500 decoration-2',
                 )}
               >
                 {link.label}
@@ -65,7 +65,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
 
         <div className="hidden items-center gap-6 lg:flex">
           {ranch?.contact.phone && (
-            <a href={telLink(ranch.contact.phone)} className="font-mono text-sm text-forest-900 hover:text-clay-600">
+            <a href={telLink(ranch.contact.phone)} className="font-mono text-sm text-forest-900 hover:text-moss-600">
               {ranch.contact.phone}
             </a>
           )}

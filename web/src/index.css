@@ -109,7 +109,7 @@
 
   /* Foco visible y consistente en toda la app */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-clay-600;
+    @apply outline-2 outline-offset-2 outline-forest-700;
   }
 
   ::selection {
@@ -152,15 +152,18 @@
     @apply mb-2 h-0.5 flex-1 bg-forest-900;
   }
 
-  /* Botón principal: rectángulo terracota de esquinas apenas redondeadas,
-     con el texto en la slab. Sin píldora ni sombra desplazada. */
+  /* Botón principal: verde bosque, el mismo del logo, con el texto en la
+     slab. Sobre fotos oscuras se usa `.boton-claro`. */
   .boton {
-    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md bg-clay-600 px-7 font-display text-lg font-bold tracking-wide text-cream-50 uppercase shadow-soft transition-colors duration-150 hover:bg-clay-700 active:bg-clay-700;
+    @apply inline-flex h-12 items-center justify-center gap-2 rounded-md bg-forest-900 px-7 font-display text-lg font-bold tracking-wide text-white uppercase shadow-soft transition-colors duration-150 hover:bg-forest-700 active:bg-forest-700;
+  }
+  .boton-claro {
+    @apply bg-white text-forest-900 hover:bg-gris-50 active:bg-gris-50;
   }
 
   /* Enlace de texto con subrayado grueso que se engrosa al pasar. */
   .enlace {
-    @apply font-medium text-forest-900 underline decoration-clay-600 decoration-2 underline-offset-4 transition-[text-decoration-thickness] hover:decoration-4;
+    @apply font-medium text-forest-900 underline decoration-gold-500 decoration-2 underline-offset-4 transition-[text-decoration-thickness] hover:decoration-4;
   }
 }
 

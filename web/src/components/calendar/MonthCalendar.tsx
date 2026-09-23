@@ -25,7 +25,7 @@ import { dayStatusStyles } from '@/components/ui/Badge'
 const RAYADO = 'bg-[repeating-linear-gradient(135deg,rgb(160_87_52/0.18)_0_3px,transparent_3px_7px)]'
 export const diaImpreso: Record<DayStatus, { cell: string; dot: string; label: string }> = {
   available: {
-    cell: 'bg-white text-forest-900 border-forest-900/30 shadow-soft hover:border-clay-600 hover:bg-gris-50',
+    cell: 'bg-white text-forest-900 border-forest-900/30 shadow-soft hover:border-forest-900 hover:bg-gris-50',
     dot: 'bg-white ring-1 ring-forest-900/40',
     label: 'Libre',
   },
@@ -177,11 +177,11 @@ export function MonthCalendar({
                 onlyAvailable && status === 'available' && !selectable && !outside && 'opacity-40',
                 isSelected &&
                   (impreso
-                    ? 'border-clay-700! bg-clay-600! text-cream-50! no-underline shadow-soft'
-                    : 'border-clay-600! bg-clay-600! text-cream-50! shadow-lift ring-3 ring-clay-600/25'),
+                    ? 'border-forest-900! bg-forest-900! text-white! no-underline shadow-soft'
+                    : 'border-forest-900! bg-forest-900! text-white! shadow-lift ring-3 ring-forest-900/20'),
               )}
             >
-              <span className={cn('font-medium', isToday(date) && !isSelected && 'underline decoration-clay-600 decoration-2 underline-offset-4')}>
+              <span className={cn('font-medium', isToday(date) && !isSelected && 'underline decoration-gold-500 decoration-2 underline-offset-4')}>
                 {format(date, 'd')}
               </span>
               {renderDayExtra?.(key)}

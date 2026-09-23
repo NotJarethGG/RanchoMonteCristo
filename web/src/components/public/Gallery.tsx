@@ -73,8 +73,8 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
                     }}
                     aria-pressed={filter === category}
                     className={cn(
-                      'font-medium text-forest-900 underline-offset-4 hover:text-clay-600',
-                      filter === category && 'underline decoration-clay-600 decoration-2',
+                      'font-medium text-forest-900 underline-offset-4 hover:text-moss-600',
+                      filter === category && 'underline decoration-gold-500 decoration-2',
                     )}
                   >
                     {category === 'todas' ? 'Todas' : nombre(category)}
@@ -108,7 +108,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
                 </button>
                 {image.title && (
                   <figcaption className="mt-3 flex items-baseline gap-3 text-sm text-forest-900">
-                    <span className="font-mono text-clay-600">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="font-mono text-moss-600">{String(index + 1).padStart(2, '0')}</span>
                     <span>{image.title}</span>
                   </figcaption>
                 )}

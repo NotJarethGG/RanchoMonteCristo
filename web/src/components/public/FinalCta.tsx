@@ -52,7 +52,7 @@ export function FinalCta({ ranch, image }: { ranch: Ranch; image?: GalleryImage 
         )}
 
         <div className="mt-10">
-          <button onClick={go} className="boton">
+          <button onClick={go} className="boton boton-claro">
             Ver fechas libres
           </button>
         </div>

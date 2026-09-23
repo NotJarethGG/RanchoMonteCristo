@@ -59,8 +59,8 @@ export function About({ ranch }: { ranch: Ranch }) {
               <span className="absolute top-5 right-5 font-mono text-xs text-stone-600">
                 {String(index + 1).padStart(2, '0')}
               </span>
-              <Icon className="size-7 text-clay-600" strokeWidth={1.5} aria-hidden="true" />
-              <p className="rotulo mt-6 text-clay-600">{titulo}</p>
+              <Icon className="size-7 text-moss-600" strokeWidth={1.5} aria-hidden="true" />
+              <p className="rotulo mt-6 text-moss-600">{titulo}</p>
               <p className="mt-2 font-display text-2xl leading-tight font-bold text-forest-900">{valor}</p>
               {detalle && <p className="mt-2 text-sm leading-relaxed text-stone-600">{detalle}</p>}
             </li>

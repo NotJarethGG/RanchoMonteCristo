@@ -95,7 +95,7 @@ export function BookingForm({
             {/* Sello de «recibida», como el que se estampa en una boleta. */}
             <p
               aria-hidden="true"
-              className="mx-auto inline-block -rotate-6 rounded-md border-4 border-clay-600 px-5 py-1 font-display text-4xl font-extrabold tracking-[0.12em] text-clay-600 uppercase"
+              className="mx-auto inline-block -rotate-6 rounded-md border-4 border-moss-600 px-5 py-1 font-display text-4xl font-extrabold tracking-[0.12em] text-moss-600 uppercase"
             >
               Recibida
             </p>

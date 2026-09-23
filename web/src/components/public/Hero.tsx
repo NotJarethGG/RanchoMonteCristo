@@ -85,7 +85,7 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
-              <button onClick={() => go('disponibilidad')} className="boton">
+              <button onClick={() => go('disponibilidad')} className="boton boton-claro">
                 Ver fechas libres
               </button>
               {ranch?.contact.whatsapp && (

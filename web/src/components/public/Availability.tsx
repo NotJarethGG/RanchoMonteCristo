@@ -69,7 +69,7 @@ export function Availability({
             {selectedDate ? (
               <div className="rounded-xl border border-forest-900/10 bg-white shadow-soft">
                 <div className="border-b border-forest-900/10 px-6 py-5">
-                  <p className="rotulo text-clay-600">Fecha elegida</p>
+                  <p className="rotulo text-moss-600">Fecha elegida</p>
                   <p className="mt-2 font-display text-3xl leading-none font-bold text-forest-900 first-letter:uppercase">
                     {formatWeekday(selectedDate)}
                   </p>
@@ -89,7 +89,7 @@ export function Availability({
                       step={5}
                       value={guests}
                       onChange={(event) => onGuestsChange(Number(event.target.value))}
-                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-forest-900/15 accent-clay-600"
+                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-forest-900/15 accent-forest-900"
                     />
                     <span className="w-14 shrink-0 text-right font-mono text-xl text-forest-900">{guests}</span>
                   </div>
@@ -136,7 +136,7 @@ export function Availability({
             ) : (
               <div className="flex grow flex-col justify-center rounded-xl border border-forest-900/10 bg-white shadow-soft p-8">
                 <p className="font-display text-3xl leading-tight font-bold text-forest-900">
-                  <span aria-hidden="true" className="mr-2 hidden text-clay-600 lg:inline">
+                  <span aria-hidden="true" className="mr-2 hidden text-moss-600 lg:inline">
                     ←
                   </span>
                   Elegí un día en el calendario
