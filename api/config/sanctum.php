@@ -11,8 +11,10 @@ return [
 
     'guard' => ['web'],
 
-    // Los tokens de administración expiran a las 12 horas ("recordarme" = 30 días).
-    'expiration' => env('SANCTUM_EXPIRATION', 720),
+    // Sin expiración global: cada token nace con su propio `expires_at`
+    // (12 h, o 30 días con «Recordarme»; ver AuthController). Un valor acá se
+    // aplica ADEMÁS y cortaba las sesiones recordadas a las 12 horas.
+    'expiration' => null,
 
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
 

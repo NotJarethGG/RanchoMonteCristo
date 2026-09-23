@@ -27,6 +27,10 @@ class StoreReservationRequest extends FormRequest
             'guests' => ['required', 'integer', 'min:1', 'max:1000'],
             'event_type' => ['nullable', 'string', 'max:80'],
             'notes' => ['nullable', 'string', 'max:2000'],
+
+            // Señuelo anti-spam: el formulario lo oculta, así que solo lo
+            // completa un bot. Se acepta acá y se descarta en el controlador.
+            'website' => ['nullable', 'string', 'max:255'],
         ];
     }
 

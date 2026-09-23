@@ -17,6 +17,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
+        // Render termina TLS en su proxy: sin confiar en él, `isSecure()` es
+        // falso, Laravel genera URLs http:// y no se enviaría HSTS.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
         ]);

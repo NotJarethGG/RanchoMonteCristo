@@ -11,8 +11,9 @@ return [
         'http://127.0.0.1:5173',
     ]),
 
-    // Permite los deploy previews de Vercel.
-    'allowed_origins_patterns' => ['#^https://.*\.vercel\.app$#'],
+    // Solo los previews de ESTE proyecto en Vercel. El patrón anterior
+    // (`*.vercel.app`) aceptaba cualquier sitio alojado ahí, de cualquier persona.
+    'allowed_origins_patterns' => ['#^https://rancho-monte-cristo[a-z0-9-]*\.vercel\.app$#'],
 
     'allowed_headers' => ['*'],
 
@@ -20,5 +21,7 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    // La autenticación es por token Bearer, no por cookies: no hace falta
+    // habilitar credenciales en CORS, y no habilitarlas reduce la superficie.
+    'supports_credentials' => false,
 ];

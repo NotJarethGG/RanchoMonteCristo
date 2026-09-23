@@ -7,6 +7,7 @@ use App\Services\AvailabilityService;
 use App\Services\PricingService;
 use App\Services\ReservationService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerSearchMacros();
+
+        DB::prohibitDestructiveCommands($this->app->isProduction() || config('database.protected'));
 
         Model::preventLazyLoading($this->app->isLocal());
         Model::unguard(false);

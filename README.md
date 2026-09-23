@@ -79,12 +79,25 @@ npm run dev                   # http://localhost:5173
 En desarrollo Vite hace proxy de `/api` y `/storage` hacia `http://127.0.0.1:8000`,
 así que no hay CORS ni URLs absolutas que configurar.
 
-### Cuentas de prueba
+### Cuentas iniciales
 
-| Rol   | Correo                          | Contraseña    |
-|-------|---------------------------------|---------------|
-| ADMIN | admin@ranchomontecristo.com     | `password123` |
-| STAFF | staff@ranchomontecristo.com     | `password123` |
+El seeder crea un **ADMIN** (`admin@ranchomontecristo.com`) y un **STAFF**
+(`staff@ranchomontecristo.com`). La contraseña depende del entorno:
+
+| Entorno | Contraseña |
+|---|---|
+| `local` / `testing` | `password123`, para no frenar el desarrollo |
+| Cualquier otro | `SEED_ADMIN_PASSWORD` / `SEED_STAFF_PASSWORD` si están definidas; si no, **se genera una aleatoria y se imprime una sola vez** en la consola |
+
+Re-ejecutar el seeder nunca pisa la contraseña de un usuario que ya existe.
+
+> ⚠️ Este repositorio es público. Nunca uses en producción una contraseña que
+> aparezca en el código. Si una base de producción se sembró alguna vez con
+> `password123`, cambiala desde `/admin/usuarios`.
+
+> 🛡️ Si tu `.env` local apunta a la base de **producción**, agregá
+> `DB_PROTECTED=true`: bloquea `migrate:fresh`, `db:wipe` y similares, que con
+> `APP_ENV=local` Laravel ejecutaría sin pedir confirmación.
 
 ---
 

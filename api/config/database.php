@@ -5,6 +5,14 @@ use Illuminate\Support\Str;
 return [
     'default' => env('DB_CONNECTION', 'mysql'),
 
+    /*
+    | Bloquea migrate:fresh, migrate:reset, db:wipe y similares. Se activa solo
+    | en producción, y con DB_PROTECTED=true en cualquier entorno que apunte a
+    | la base real (por ejemplo, una máquina de desarrollo conectada a Supabase,
+    | donde APP_ENV=local no dispararía la confirmación de Laravel).
+    */
+    'protected' => (bool) env('DB_PROTECTED', false),
+
     'connections' => [
         'mysql' => [
             'driver' => 'mysql',

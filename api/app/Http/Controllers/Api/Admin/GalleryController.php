@@ -28,7 +28,7 @@ class GalleryController extends Controller
     {
         $data = $request->validate([
             'image' => ['required_without:path', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
-            'path' => ['required_without:image', 'string', 'max:500'],
+            'path' => ['required_without:image', 'url:http,https', 'max:500'],
             'title' => ['nullable', 'string', 'max:150'],
             'caption' => ['nullable', 'string', 'max:255'],
             'alt' => ['nullable', 'string', 'max:255'],
