@@ -3,6 +3,7 @@ import { MessageCircle } from 'lucide-react'
 import { whatsappLink } from '@/lib/format'
 import { useIsScrolled } from '@/hooks/useScrollSpy'
 import { cn } from '@/lib/cn'
+import { useT } from '@/lib/i18n'
 
 /**
  * Acceso directo a WhatsApp que aparece al bajar del hero. Una etiqueta con
@@ -12,6 +13,7 @@ import { cn } from '@/lib/cn'
 export function WhatsappFab({ phone }: { phone?: string | null }) {
   const bajoElHero = useIsScrolled(500)
   const [enElCierre, setEnElCierre] = useState(false)
+  const t = useT()
 
   useEffect(() => {
     const onScroll = () =>
@@ -26,7 +28,7 @@ export function WhatsappFab({ phone }: { phone?: string | null }) {
 
   return (
     <a
-      href={whatsappLink(phone, 'Hola, quisiera consultar por una fecha en el rancho.')}
+      href={whatsappLink(phone, t.whatsapp.consulta)}
       target="_blank"
       rel="noreferrer"
       className={cn(

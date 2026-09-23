@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Field'
 import { Table, Td, Th, Tr } from '@/components/ui/Table'
-import { PaymentBadge, StatusBadge } from '@/components/ui/Badge'
+import { LocaleBadge, PaymentBadge, StatusBadge } from '@/components/ui/Badge'
 import { EmptyState, ErrorState, SkeletonRows } from '@/components/ui/States'
 import { Pagination } from '@/components/ui/Pagination'
 import { useReservations } from '@/hooks/useAdminData'
@@ -192,6 +192,7 @@ export default function ReservationsPage() {
                             status={reservation.totals.payment_status}
                             label={reservation.totals.payment_status_label}
                           />
+                          <LocaleBadge locale={reservation.locale} />
                         </div>
                       </Td>
                       <Td className="text-right tabular-nums">{formatMoney(reservation.totals.total)}</Td>

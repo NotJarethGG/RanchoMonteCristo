@@ -14,7 +14,7 @@ class GalleryImage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ranch_id', 'title', 'caption', 'alt', 'path', 'external_id', 'category',
+        'translations', 'ranch_id', 'title', 'caption', 'alt', 'path', 'external_id', 'category',
         'is_featured', 'is_active', 'sort_order',
     ];
 
@@ -23,6 +23,7 @@ class GalleryImage extends Model
     protected function casts(): array
     {
         return [
+            'translations' => 'array',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
             'sort_order' => 'integer',

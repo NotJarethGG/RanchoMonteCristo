@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Pencil, Plus, Sparkles, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { EnIngles, textoOpcional } from '@/components/admin/EnIngles'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Field, Input, Select, Switch, Textarea } from '@/components/ui/Field'
@@ -11,7 +12,15 @@ import { ServiceIcon, iconOptions } from '@/components/ui/Icon'
 import { useCreateService, useDeleteService, useServices, useUpdateService } from '@/hooks/useAdminData'
 import type { Service } from '@/types'
 
-const EMPTY = { name: '', description: '', icon: 'sparkles', is_active: true, sort_order: 0 }
+const EMPTY = {
+  name: '',
+  description: '',
+  icon: 'sparkles',
+  is_active: true,
+  sort_order: 0,
+  name_en: '',
+  description_en: '',
+}
 
 export default function ServicesPage() {
   const { data: services, isLoading } = useServices()
@@ -34,6 +43,8 @@ export default function ServicesPage() {
             icon: service.icon,
             is_active: service.is_active,
             sort_order: service.sort_order,
+            name_en: service.translations?.en?.name ?? '',
+            description_en: service.translations?.en?.description ?? '',
           }
         : { ...EMPTY, sort_order: services?.length ?? 0 },
     )
@@ -41,8 +52,13 @@ export default function ServicesPage() {
   }
 
   const submit = async () => {
-    if (editing) await update.mutateAsync({ id: editing.id, input: form })
-    else await create.mutateAsync(form)
+    const { name_en, description_en, ...datos } = form
+    const input = {
+      ...datos,
+      translations: { en: { name: textoOpcional(name_en), description: textoOpcional(description_en) } },
+    }
+    if (editing) await update.mutateAsync({ id: editing.id, input })
+    else await create.mutateAsync(input)
     setOpen(false)
   }
 
@@ -125,6 +141,15 @@ export default function ServicesPage() {
           <Field label="Descripción" htmlFor="s_desc">
             <Textarea id="s_desc" className="min-h-20" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
           </Field>
+
+          <EnIngles>
+            <Field label="Nombre" htmlFor="s_name_en">
+              <Input id="s_name_en" lang="en" value={form.name_en} onChange={(e) => setForm({ ...form, name_en: e.target.value })} />
+            </Field>
+            <Field label="Descripción" htmlFor="s_desc_en">
+              <Textarea id="s_desc_en" lang="en" className="min-h-20" value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} />
+            </Field>
+          </EnIngles>
 
           <Field label="Icono" htmlFor="s_icon">
             <div className="flex items-center gap-3">

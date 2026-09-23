@@ -11,11 +11,12 @@ import {
   startOfWeek,
   endOfWeek,
 } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { enUS, es } from 'date-fns/locale'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { toDate } from '@/lib/format'
 import { dayStatusStyles } from '@/components/ui/Badge'
+import { useLang, useT } from '@/lib/i18n'
 
 /*
  * Colores de la variante impresa. Los días reservados van tachados con un
@@ -47,8 +48,6 @@ export const diaImpreso: Record<DayStatus, { cell: string; dot: string; label: s
   past: { cell: 'bg-transparent text-forest-900/30 border-transparent', dot: 'bg-transparent', label: 'Pasado' },
 }
 import type { AvailabilityDay, DayStatus } from '@/types'
-
-const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 export interface MonthCalendarProps {
   month: Date
@@ -84,6 +83,11 @@ export function MonthCalendar({
   impreso = false,
   className,
 }: MonthCalendarProps) {
+  // Fuera de la portada no hay proveedor de idioma: queda en español.
+  const lang = useLang()
+  const t = useT().calendario
+  const locale = lang === 'en' ? enUS : es
+
   const statusByDate = useMemo(() => {
     const map = new Map<string, AvailabilityDay>()
     days.forEach((day) => map.set(day.date, day))
@@ -102,7 +106,7 @@ export function MonthCalendar({
         <button
           type="button"
           onClick={() => onMonthChange(addMonths(month, -1))}
-          aria-label="Mes anterior"
+          aria-label={t.anterior}
           className={cn(
             'p-2 transition-colors',
             impreso
@@ -114,13 +118,13 @@ export function MonthCalendar({
         </button>
 
         <p className={cn('font-display text-lg capitalize', impreso ? 'text-xl font-bold text-forest-900' : 'text-forest-900')}>
-          {format(month, 'MMMM yyyy', { locale: es })}
+          {format(month, 'MMMM yyyy', { locale })}
         </p>
 
         <button
           type="button"
           onClick={() => onMonthChange(addMonths(month, 1))}
-          aria-label="Mes siguiente"
+          aria-label={t.siguiente}
           className={cn(
             'p-2 transition-colors',
             impreso
@@ -133,7 +137,7 @@ export function MonthCalendar({
       </header>
 
       <div className="mb-1.5 grid grid-cols-7 gap-1 sm:gap-1.5">
-        {WEEKDAYS.map((day, i) => (
+        {t.dias.map((day, i) => (
           <div key={i} className={cn('py-1 text-center text-[11px] font-semibold uppercase tracking-wider', impreso ? 'font-mono text-forest-900' : 'text-stone-600')}>
             {day}
           </div>
@@ -163,7 +167,7 @@ export function MonthCalendar({
               type="button"
               disabled={!selectable}
               onClick={() => selectable && onSelect?.(key, status)}
-              aria-label={`${format(date, "d 'de' MMMM", { locale: es })} — ${styles.label}`}
+              aria-label={`${format(date, t.diaAria, { locale })} — ${lang === 'es' ? styles.label : t.estados[status]}`}
               aria-pressed={isSelected}
               className={cn(
                 'relative flex aspect-square flex-col items-center justify-center border text-sm transition-all duration-150',
@@ -196,12 +200,14 @@ export function MonthCalendar({
 export function CalendarLegend({ items, impreso = false }: { items?: DayStatus[]; impreso?: boolean }) {
   const shown = items ?? (['available', 'pending', 'reserved', 'blocked'] as DayStatus[])
   const estilos = impreso ? diaImpreso : dayStatusStyles
+  const lang = useLang()
+  const t = useT().calendario
   return (
     <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
       {shown.map((status) => (
         <li key={status} className={cn('flex items-center gap-2 text-sm', impreso ? 'text-forest-900' : 'text-stone-600')}>
           <span className={cn(impreso ? 'size-3.5 rounded' : 'size-2.5 rounded-full', estilos[status].dot)} />
-          {estilos[status].label}
+          {lang === 'es' ? estilos[status].label : t.estados[status]}
         </li>
       ))}
     </ul>

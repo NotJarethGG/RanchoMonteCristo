@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\Translations;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RanchSettingsRequest extends FormRequest
@@ -41,6 +42,21 @@ class RanchSettingsRequest extends FormRequest
             'areas' => ['nullable', 'array'],
             'areas.*' => ['string', 'max:120'],
             'policies' => ['nullable', 'string', 'max:5000'],
+
+            ...Translations::rules([
+                'tagline' => ['string', 'max:200'],
+                'description' => ['string', 'max:5000'],
+                'about' => ['string', 'max:5000'],
+                'policies' => ['string', 'max:5000'],
+                'address' => ['string', 'max:255'],
+                'schedule' => ['array'],
+                'schedule.*.day' => ['string', 'max:80'],
+                'schedule.*.hours' => ['string', 'max:80'],
+                'event_types' => ['array'],
+                'event_types.*' => ['string', 'max:80'],
+                'areas' => ['array'],
+                'areas.*' => ['string', 'max:120'],
+            ]),
         ];
     }
 }

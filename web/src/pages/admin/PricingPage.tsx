@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Calculator, Pencil, Plus, Tags, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { EnIngles, textoOpcional } from '@/components/admin/EnIngles'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Field, Input, Select, Switch, Textarea } from '@/components/ui/Field'
@@ -25,6 +26,7 @@ const EMPTY = {
   name: '', type: 'base', amount_type: 'fixed', amount: 0,
   starts_on: '', ends_on: '', weekdays: [] as number[],
   min_guests: '', max_guests: '', priority: 100, is_active: true, description: '',
+  name_en: '',
 }
 
 export default function PricingPage() {
@@ -52,6 +54,7 @@ export default function PricingPage() {
             starts_on: rule.starts_on ?? '', ends_on: rule.ends_on ?? '', weekdays: rule.weekdays ?? [],
             min_guests: rule.min_guests?.toString() ?? '', max_guests: rule.max_guests?.toString() ?? '',
             priority: rule.priority, is_active: rule.is_active, description: rule.description ?? '',
+            name_en: rule.translations?.en?.name ?? '',
           }
         : EMPTY,
     )
@@ -59,8 +62,10 @@ export default function PricingPage() {
   }
 
   const submit = async () => {
+    const { name_en, ...datos } = form
     const payload = {
-      ...form,
+      ...datos,
+      translations: { en: { name: textoOpcional(name_en) } },
       amount: Number(form.amount),
       starts_on: form.starts_on || undefined,
       ends_on: form.ends_on || undefined,
@@ -223,6 +228,12 @@ export default function PricingPage() {
           <Field label="Nombre" required htmlFor="p_name">
             <Input id="p_name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Recargo fin de semana" />
           </Field>
+
+          <EnIngles>
+            <Field label="Nombre" hint="Es el renglón que ve el cliente en el cálculo del precio." htmlFor="p_name_en">
+              <Input id="p_name_en" lang="en" value={form.name_en} onChange={(e) => setForm({ ...form, name_en: e.target.value })} placeholder="Weekend surcharge" />
+            </Field>
+          </EnIngles>
 
           <div className="grid gap-5 sm:grid-cols-3">
             <Field label="Tipo" htmlFor="p_type">

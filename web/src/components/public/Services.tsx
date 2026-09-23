@@ -1,4 +1,5 @@
 import { ServiceIcon } from '@/components/ui/Icon'
+import { useT, useTr } from '@/lib/i18n'
 import type { Service } from '@/types'
 
 /**
@@ -7,14 +8,16 @@ import type { Service } from '@/types'
  * de lo que trae el alquiler.
  */
 export function Services({ services = [] }: { services?: Service[] }) {
+  const t = useT().services
+  const tr = useTr()
   if (!services.length) return null
 
   return (
     <section id="servicios" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page">
-        <h2 className="titulo-seccion">Lo que hay</h2>
+        <h2 className="titulo-seccion">{t.titulo}</h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
-          Todo viene con el alquiler. Durante el día el rancho es solo de tu grupo.
+          {t.intro}
         </p>
 
         <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -31,10 +34,10 @@ export function Services({ services = [] }: { services?: Service[] }) {
                 className="size-8 text-forest-900 transition-colors group-hover:text-moss-600"
               />
               <h3 className="mt-6 font-display text-2xl leading-tight font-bold text-forest-900">
-                {service.name}
+                {tr(service, 'name')}
               </h3>
               {service.description && (
-                <p className="mt-2 text-sm leading-relaxed text-stone-600">{service.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-stone-600">{tr(service, 'description')}</p>
               )}
             </li>
           ))}

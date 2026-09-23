@@ -9,7 +9,7 @@ import { PaymentModal } from '@/components/admin/PaymentModal'
 import { ReservationFormModal } from '@/components/admin/ReservationFormModal'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { PaymentBadge, StatusBadge } from '@/components/ui/Badge'
+import { LocaleBadge, PaymentBadge, StatusBadge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
 import { Field, Textarea } from '@/components/ui/Field'
 import { EmptyState, ErrorState, Spinner } from '@/components/ui/States'
@@ -106,6 +106,7 @@ export default function ReservationDetailPage() {
       <div className="mb-5 flex flex-wrap items-center gap-2">
         <StatusBadge status={reservation.status} label={reservation.status_label} />
         <PaymentBadge status={totals.payment_status} label={totals.payment_status_label} />
+        <LocaleBadge locale={reservation.locale} />
         {reservation.cancellation_reason && (
           <span className="text-sm text-danger-600">Motivo: {reservation.cancellation_reason}</span>
         )}

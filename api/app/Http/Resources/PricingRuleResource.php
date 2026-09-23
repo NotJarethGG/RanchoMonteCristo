@@ -25,6 +25,9 @@ class PricingRuleResource extends JsonResource
             'priority' => $this->priority,
             'is_active' => $this->is_active,
             'description' => $this->description,
+            // Textos en inglés que cargó el propietario. Los que faltan se
+            // muestran en español.
+            'translations' => (object) ($this->translations ?? []),
         ];
     }
 }

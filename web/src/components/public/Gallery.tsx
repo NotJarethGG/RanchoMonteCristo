@@ -3,18 +3,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { cn } from '@/lib/cn'
 import { imageSrcSet, imageUrl } from '@/lib/image'
+import { altDeFoto, useLang, useT, useTr } from '@/lib/i18n'
 import type { GalleryImage } from '@/types'
 
-/** Las categorías se guardan como slug; acá se muestran con tildes. */
-const NOMBRES: Record<string, string> = {
-  'areas-verdes': 'Áreas verdes',
-  rancho: 'Rancho',
-  eventos: 'Eventos',
-  parrilla: 'Parrilla',
-  cocina: 'Cocina',
-}
-const nombre = (slug: string) =>
-  NOMBRES[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
+/** Las categorías se guardan como slug; los nombres de cada idioma están en `i18n`. */
+const nombre = (slug: string, nombres: Record<string, string>) =>
+  nombres[slug] ?? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ')
 
 /*
  * Composición en ciclos de cinco fotos sobre 12 columnas: una grande con una
@@ -36,6 +30,9 @@ const DISPOSICION = [
 export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const [filter, setFilter] = useState<string>('todas')
+  const lang = useLang()
+  const t = useT().gallery
+  const tr = useTr()
 
   const categories = useMemo(() => {
     const unique = new Set(images.map((image) => image.category).filter(Boolean) as string[])
@@ -58,11 +55,11 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   return (
     <section id="galeria" className="scroll-mt-20 bg-gris-50 py-20 lg:py-28">
       <div className="container-page">
-        <h2 className="titulo-seccion">Así se ve</h2>
+        <h2 className="titulo-seccion">{t.titulo}</h2>
 
         <div className="mt-8 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-4">
           {categories.length > 2 && (
-            <ul className="flex flex-wrap items-baseline gap-x-1 gap-y-2 text-[15px]" aria-label="Filtrar fotos">
+            <ul className="flex flex-wrap items-baseline gap-x-1 gap-y-2 text-[15px]" aria-label={t.filtrar}>
               {categories.map((category, index) => (
                 <li key={category} className="flex items-baseline">
                   {index > 0 && <span aria-hidden="true" className="mx-2 text-forest-900/30">/</span>}
@@ -77,39 +74,41 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
                       filter === category && 'underline decoration-gold-500 decoration-2',
                     )}
                   >
-                    {category === 'todas' ? 'Todas' : nombre(category)}
+                    {nombre(category, t.categorias)}
                   </button>
                 </li>
               ))}
             </ul>
           )}
-          <p className="rotulo text-stone-600">Tocá una foto para verla en grande</p>
+          <p className="rotulo text-stone-600">{t.tocar}</p>
         </div>
 
         <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-12">
           {visible.map((image, index) => {
             const d = DISPOSICION[index % DISPOSICION.length]
+            const titulo = tr(image, 'title')
+            const alt = altDeFoto(image, lang)
             return (
               <figure key={image.id} className={cn(index % 5 === 0 ? 'col-span-2' : 'col-span-1', d.span)}>
                 <button
                   onClick={() => setOpenIndex(index)}
-                  aria-label={`Ampliar foto: ${image.title ?? image.alt ?? 'rancho'}`}
+                  aria-label={`${t.ampliar}: ${titulo ?? alt ?? t.rancho}`}
                   className={cn('group block w-full overflow-hidden rounded-xl bg-forest-900 shadow-soft transition-shadow hover:shadow-lift', d.aspecto)}
                 >
                   <img
                     src={imageUrl(image.url, d.anchos[1])}
                     srcSet={imageSrcSet(image.url, d.anchos)}
                     sizes={d.ancho}
-                    alt={image.alt ?? image.title ?? 'Fotografía del rancho'}
+                    alt={alt ?? titulo ?? t.altFoto}
                     loading={index < 2 ? 'eager' : 'lazy'}
                     decoding="async"
                     className="size-full object-cover transition-[filter] duration-300 group-hover:brightness-110"
                   />
                 </button>
-                {image.title && (
+                {titulo && (
                   <figcaption className="mt-3 flex items-baseline gap-3 text-sm text-forest-900">
                     <span className="font-mono text-moss-600">{String(index + 1).padStart(2, '0')}</span>
-                    <span>{image.title}</span>
+                    <span>{titulo}</span>
                   </figcaption>
                 )}
               </figure>
@@ -125,25 +124,25 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
               src={imageUrl(current.url, 1600)}
               srcSet={imageSrcSet(current.url, [960, 1600, 2400])}
               sizes="(min-width: 1152px) 1152px, 100vw"
-              alt={current.alt ?? current.title ?? ''}
+              alt={altDeFoto(current, lang) ?? ''}
               className="max-h-[78vh] w-full rounded-xl object-contain"
             />
 
             <figcaption className="mt-4 flex items-baseline justify-between gap-4 text-cream-50">
               <p className="flex items-baseline gap-3">
                 <span className="font-mono text-gold-500">{String((openIndex ?? 0) + 1).padStart(2, '0')}</span>
-                <span className="font-display text-xl font-bold">{current.title}</span>
+                <span className="font-display text-xl font-bold">{tr(current, 'title')}</span>
               </p>
               <p className="rotulo shrink-0 text-cream-50/70">
-                {(openIndex ?? 0) + 1} de {visible.length}
+                {(openIndex ?? 0) + 1} {t.de} {visible.length}
               </p>
             </figcaption>
 
             {visible.length > 1 && (
               <>
                 {[
-                  { dir: -1, Icon: ChevronLeft, side: 'left-3', label: 'Foto anterior' },
-                  { dir: 1, Icon: ChevronRight, side: 'right-3', label: 'Foto siguiente' },
+                  { dir: -1, Icon: ChevronLeft, side: 'left-3', label: t.anterior },
+                  { dir: 1, Icon: ChevronRight, side: 'right-3', label: t.siguiente },
                 ].map(({ dir, Icon, side, label }) => (
                   <button
                     key={label}

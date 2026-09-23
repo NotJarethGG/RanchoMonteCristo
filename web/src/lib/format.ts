@@ -1,5 +1,9 @@
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { enUS, es } from 'date-fns/locale'
+
+/** Locale de date-fns para cada idioma del sitio. */
+const LOCALES = { es, en: enUS }
+type Idioma = keyof typeof LOCALES
 
 const currency = new Intl.NumberFormat('es-CR', {
   style: 'currency',
@@ -23,16 +27,21 @@ export function toDate(value: string | Date): Date {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T12:00:00`) : parseISO(value)
 }
 
-export function formatDate(value: string | Date | null | undefined, pattern = "d 'de' MMMM, yyyy") {
+export function formatDate(
+  value: string | Date | null | undefined,
+  pattern = "d 'de' MMMM, yyyy",
+  lang: Idioma = 'es',
+) {
   if (!value) return '—'
   const date = toDate(value)
-  return isValid(date) ? format(date, pattern, { locale: es }) : '—'
+  return isValid(date) ? format(date, pattern, { locale: LOCALES[lang] }) : '—'
 }
 
 export const formatDateShort = (value: string | Date | null | undefined) =>
   formatDate(value, 'd MMM yyyy')
 
-export const formatWeekday = (value: string | Date) => formatDate(value, 'EEEE')
+export const formatWeekday = (value: string | Date, lang: Idioma = 'es') =>
+  formatDate(value, 'EEEE', lang)
 
 export function formatRelative(value: string | null | undefined) {
   if (!value) return '—'
@@ -40,11 +49,11 @@ export function formatRelative(value: string | null | undefined) {
   return isValid(date) ? formatDistanceToNowStrict(date, { locale: es, addSuffix: true }) : '—'
 }
 
-/** '09:00' → '9:00 a.m.' */
-export function formatTime(value: string | null | undefined) {
+/** '09:00' → '9:00 a.m.' (en inglés, '9:00 AM') */
+export function formatTime(value: string | null | undefined, lang: Idioma = 'es') {
   if (!value) return '—'
   const [h, m] = value.split(':').map(Number)
-  const suffix = h < 12 ? 'a.m.' : 'p.m.'
+  const suffix = lang === 'en' ? (h < 12 ? 'AM' : 'PM') : h < 12 ? 'a.m.' : 'p.m.'
   const hour = h % 12 === 0 ? 12 : h % 12
   return `${hour}:${String(m).padStart(2, '0')} ${suffix}`
 }
@@ -83,8 +92,12 @@ export const initials = (name: string) =>
     .map((part) => part[0]?.toUpperCase())
     .join('')
 
-/** 10.132288, -85.464703 → «10°07′56″ N  85°27′53″ O» */
-export function coordenadas(lat: number | null | undefined, lng: number | null | undefined) {
+/** 10.132288, -85.464703 → «10°07′56″ N  85°27′53″ O» (en inglés, «W») */
+export function coordenadas(
+  lat: number | null | undefined,
+  lng: number | null | undefined,
+  lang: Idioma = 'es',
+) {
   if (lat == null || lng == null) return null
 
   const dms = (valor: number) => {
@@ -95,5 +108,6 @@ export function coordenadas(lat: number | null | undefined, lng: number | null |
     return `${grados}°${String(minutos).padStart(2, '0')}′${String(segundos).padStart(2, '0')}″`
   }
 
-  return `${dms(lat)} ${lat >= 0 ? 'N' : 'S'}  ${dms(lng)} ${lng >= 0 ? 'E' : 'O'}`
+  const oeste = lang === 'en' ? 'W' : 'O'
+  return `${dms(lat)} ${lat >= 0 ? 'N' : 'S'}  ${dms(lng)} ${lng >= 0 ? 'E' : oeste}`
 }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { PublicNavbar } from '@/components/layout/PublicNavbar'
 import { PublicFooter } from '@/components/layout/PublicFooter'
 import { Hero } from '@/components/public/Hero'
@@ -11,9 +11,10 @@ import { Testimonials } from '@/components/public/Testimonials'
 import { FinalCta } from '@/components/public/FinalCta'
 import { WhatsappFab } from '@/components/public/WhatsappFab'
 import { StructuredData } from '@/components/public/StructuredData'
-import { ErrorState, Spinner } from '@/components/ui/States'
+import { EmptyState, Spinner } from '@/components/ui/States'
 import { useLanding } from '@/hooks/usePublicData'
 import { normalizeError } from '@/lib/api'
+import { HOME_PATH, LangProvider, useT, type Lang } from '@/lib/i18n'
 
 // El formulario está a mitad de página y arrastra react-hook-form + zod
 // (~36 KB comprimidos). Se carga aparte para no demorar el primer pintado.
@@ -32,7 +33,36 @@ function BookingFormPlaceholder() {
   )
 }
 
-export default function HomePage() {
+/**
+ * Título, descripción, idioma del documento y URL canónica según la versión.
+ * El HTML de cada ruta ya los trae correctos (ver vite.config.ts); esto los
+ * actualiza al cambiar de idioma sin recargar.
+ */
+function useDocumentoEnIdioma(lang: Lang) {
+  const { meta } = useT()
+
+  useEffect(() => {
+    document.documentElement.lang = lang
+    document.title = meta.title
+    document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description)
+
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (canonical) canonical.href = new URL(HOME_PATH[lang], canonical.href).href
+  }, [lang, meta])
+}
+
+export default function HomePage({ lang = 'es' }: { lang?: Lang }) {
+  return (
+    <LangProvider value={lang}>
+      <Portada lang={lang} />
+    </LangProvider>
+  )
+}
+
+function Portada({ lang }: { lang: Lang }) {
+  useDocumentoEnIdioma(lang)
+  const t = useT()
+
   // La fecha elegida en el calendario viaja hasta el formulario de reserva.
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [guests, setGuests] = useState(40)
@@ -41,7 +71,15 @@ export default function HomePage() {
   if (isError) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-white">
-        <ErrorState message={normalizeError(error).message} onRetry={() => refetch()} />
+        <EmptyState
+          title={t.estado.errorTitulo}
+          description={lang === 'es' ? normalizeError(error).message : undefined}
+          action={
+            <button onClick={() => refetch()} className="boton">
+              {t.estado.reintentar}
+            </button>
+          }
+        />
       </div>
     )
   }
@@ -86,7 +124,7 @@ export default function HomePage() {
             <FinalCta ranch={data.ranch} image={closing} />
           </>
         ) : (
-          <div className="flex justify-center bg-white py-24" role="status" aria-label="Cargando">
+          <div className="flex justify-center bg-white py-24" role="status" aria-label={t.estado.cargando}>
             <Spinner className="size-6" />
           </div>
         )}

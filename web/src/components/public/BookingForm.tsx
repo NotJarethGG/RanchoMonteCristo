@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from '@/lib/validation'
@@ -7,28 +7,31 @@ import { toast } from 'sonner'
 import { Field, Input, Select, Textarea } from '@/components/ui/Field'
 import { useRequestReservation } from '@/hooks/usePublicData'
 import { normalizeError } from '@/lib/api'
-import { formatDateShort, whatsappLink } from '@/lib/format'
+import { formatDate, whatsappLink } from '@/lib/format'
+import { useLang, useT, useTr, type Textos } from '@/lib/i18n'
 import type { Ranch } from '@/types'
 
-const schema = z
-  .object({
-    full_name: z.string().min(3, 'Escribí tu nombre completo.'),
-    phone: z.string().min(8, 'Necesitamos un teléfono de al menos 8 dígitos.'),
-    email: z.union([z.string().email('Revisá el formato del correo.'), z.literal('')]).optional(),
-    event_date: z.string().min(1, 'Elegí la fecha del evento.'),
-    start_time: z.string().min(1, 'Indicá la hora de entrada.'),
-    end_time: z.string().min(1, 'Indicá la hora de salida.'),
-    guests: z.coerce.number().int().min(1, 'Indicá al menos una persona.'),
-    event_type: z.string().optional(),
-    notes: z.string().max(2000).optional(),
-    website: z.string().optional(),
-  })
-  .refine((data) => data.end_time > data.start_time, {
-    message: 'La salida debe ser después de la entrada.',
-    path: ['end_time'],
-  })
+/** Los mensajes de validación salen en el idioma de la página. */
+const crearSchema = (e: Textos['booking']['errores']) =>
+  z
+    .object({
+      full_name: z.string().min(3, e.nombre),
+      phone: z.string().min(8, e.telefono),
+      email: z.union([z.string().email(e.correo), z.literal('')]).optional(),
+      event_date: z.string().min(1, e.fecha),
+      start_time: z.string().min(1, e.entrada),
+      end_time: z.string().min(1, e.salidaFalta),
+      guests: z.coerce.number().int().min(1, e.personas),
+      event_type: z.string().optional(),
+      notes: z.string().max(2000).optional(),
+      website: z.string().optional(),
+    })
+    .refine((data) => data.end_time > data.start_time, {
+      message: e.salida,
+      path: ['end_time'],
+    })
 
-export type BookingFormValues = z.input<typeof schema>
+export type BookingFormValues = z.input<ReturnType<typeof crearSchema>>
 
 export function BookingForm({
   ranch,
@@ -41,6 +44,18 @@ export function BookingForm({
   guests: number
 }) {
   const mutation = useRequestReservation()
+  const lang = useLang()
+  const t = useT()
+  const b = t.booking
+  const tr = useTr()
+  const schema = useMemo(() => crearSchema(b.errores), [b])
+
+  // En inglés se muestran los tipos traducidos, pero se envía el nombre en
+  // español: así el panel los ve siempre iguales.
+  const tiposEvento = ranch?.event_types ?? []
+  const tiposMostrados = ranch ? tr(ranch, 'event_types') : []
+  const etiquetaTipo = (i: number) =>
+    tiposMostrados.length === tiposEvento.length ? tiposMostrados[i] : tiposEvento[i]
 
   const {
     register,
@@ -74,16 +89,23 @@ export function BookingForm({
         ...values,
         guests: Number(values.guests),
         email: values.email || undefined,
+        locale: lang,
       })
-      toast.success(result.message)
+      toast.success(b.servidor?.enviada ?? result.message)
       reset()
     } catch (error) {
       const normalized = normalizeError(error)
       // Los errores de validación del servidor se pintan sobre cada campo.
+      // El servidor contesta en español; en inglés se usan mensajes propios.
       Object.entries(normalized.errors).forEach(([field, messages]) => {
-        setError(field as keyof BookingFormValues, { message: messages[0] })
+        const message = b.servidor
+          ? field === 'event_date'
+            ? b.servidor.fecha
+            : b.servidor.campo
+          : messages[0]
+        setError(field as keyof BookingFormValues, { message })
       })
-      toast.error(normalized.message)
+      toast.error(b.servidor?.general ?? normalized.message)
     }
   })
 
@@ -97,15 +119,14 @@ export function BookingForm({
               aria-hidden="true"
               className="mx-auto inline-block -rotate-6 rounded-md border-4 border-moss-600 px-5 py-1 font-display text-4xl font-extrabold tracking-[0.12em] text-moss-600 uppercase"
             >
-              Recibida
+              {b.recibida}
             </p>
-            <h2 className="mt-8 font-display text-3xl font-bold text-forest-900">Ya tenemos tu solicitud</h2>
+            <h2 className="mt-8 font-display text-3xl font-bold text-forest-900">{b.recibidaTitulo}</h2>
             <p className="mt-4 leading-relaxed text-stone-600">
-              La fecha queda como <strong className="text-forest-900">pendiente</strong> hasta que hablemos.
-              Te escribimos o llamamos pronto para confirmar el precio y coordinar el adelanto.
+              {b.recibidaAntes} <strong className="text-forest-900">{b.pendiente}</strong> {b.recibidaDespues}
             </p>
             <button onClick={() => mutation.reset()} className="enlace mt-8">
-              Enviar otra solicitud
+              {b.otra}
             </button>
           </div>
         </div>
@@ -116,24 +137,22 @@ export function BookingForm({
   return (
     <section id="reservar" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page">
-        <h2 className="titulo-seccion">Apartá tu fecha</h2>
+        <h2 className="titulo-seccion">{b.titulo}</h2>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
           <div className="space-y-5 text-lg leading-relaxed text-stone-600">
-            <p>
-              Llená la solicitud y te llamamos o escribimos para confirmar el precio y cómo apartar el día.
-            </p>
-            <p>Nada queda confirmado hasta que hablemos con vos.</p>
+            <p>{b.intro1}</p>
+            <p>{b.intro2}</p>
             {ranch?.contact.whatsapp && (
               <p className="border-t border-forest-900/10 pt-5 text-base">
-                ¿Preferís escribir directo?{' '}
+                {b.directo}{' '}
                 <a
-                  href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera apartar una fecha en el rancho.')}
+                  href={whatsappLink(ranch.contact.whatsapp, t.whatsapp.apartar)}
                   target="_blank"
                   rel="noreferrer"
                   className="enlace"
                 >
-                  WhatsApp al {ranch.contact.phone}
+                  {b.whatsappAl} {ranch.contact.phone}
                 </a>
               </p>
             )}
@@ -141,9 +160,9 @@ export function BookingForm({
 
           <div className="rounded-xl border border-forest-900/10 bg-white shadow-soft">
             <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-forest-900/10 px-6 py-5 sm:px-8">
-              <p className="font-display text-2xl font-bold text-forest-900">Solicitud de fecha</p>
+              <p className="font-display text-2xl font-bold text-forest-900">{b.solicitud}</p>
               <p className="font-mono text-sm text-stone-600">
-                {selectedDate ? `Para el ${formatDateShort(selectedDate)}` : 'Fecha por definir'}
+                {selectedDate ? b.para(formatDate(selectedDate, t.fechas.corta, lang)) : b.sinFecha}
               </p>
             </div>
 
@@ -152,44 +171,44 @@ export function BookingForm({
                   pantalla, pero los bots completan todos los campos. El
                   backend descarta la solicitud si llega con valor. */}
               <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                <label htmlFor="website">No completar este campo</label>
+                <label htmlFor="website">{b.senuelo}</label>
                 <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Nombre completo" required error={errors.full_name?.message} htmlFor="full_name">
+                <Field label={b.nombre} required error={errors.full_name?.message} htmlFor="full_name">
                   <Input id="full_name" autoComplete="name" invalid={!!errors.full_name} {...register('full_name')} />
                 </Field>
 
-                <Field label="Teléfono" required error={errors.phone?.message} htmlFor="phone">
+                <Field label={b.telefono} required error={errors.phone?.message} htmlFor="phone" hint={b.telefonoHint}>
                   <Input id="phone" type="tel" autoComplete="tel" invalid={!!errors.phone} {...register('phone')} />
                 </Field>
               </div>
 
               <Field
-                label="Correo (opcional)"
+                label={b.correo}
                 error={errors.email?.message}
                 htmlFor="email"
                
-                hint="Solo si querés la confirmación por escrito."
+                hint={b.correoHint}
               >
                 <Input id="email" type="email" autoComplete="email" invalid={!!errors.email} {...register('email')} />
               </Field>
 
               <div className="grid gap-5 sm:grid-cols-3">
-                <Field label="Fecha" required error={errors.event_date?.message} htmlFor="event_date">
+                <Field label={b.fecha} required error={errors.event_date?.message} htmlFor="event_date">
                   <Input id="event_date" type="date" invalid={!!errors.event_date} {...register('event_date')} />
                 </Field>
-                <Field label="Llegada" required error={errors.start_time?.message} htmlFor="start_time">
+                <Field label={b.llegada} required error={errors.start_time?.message} htmlFor="start_time">
                   <Input id="start_time" type="time" invalid={!!errors.start_time} {...register('start_time')} />
                 </Field>
-                <Field label="Salida" required error={errors.end_time?.message} htmlFor="end_time">
+                <Field label={b.salida} required error={errors.end_time?.message} htmlFor="end_time">
                   <Input id="end_time" type="time" invalid={!!errors.end_time} {...register('end_time')} />
                 </Field>
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Personas" required error={errors.guests?.message} htmlFor="guests">
+                <Field label={b.personas} required error={errors.guests?.message} htmlFor="guests">
                   <Input
                     id="guests"
                     type="number"
@@ -200,25 +219,25 @@ export function BookingForm({
                     {...register('guests')}
                   />
                 </Field>
-                <Field label="Qué celebran" error={errors.event_type?.message} htmlFor="event_type">
+                <Field label={b.celebran} error={errors.event_type?.message} htmlFor="event_type">
                   <Select id="event_type" {...register('event_type')}>
-                    <option value="">Elegí una opción</option>
-                    {(ranch?.event_types ?? []).map((type) => (
+                    <option value="">{b.elegiOpcion}</option>
+                    {tiposEvento.map((type, i) => (
                       <option key={type} value={type}>
-                        {type}
+                        {etiquetaTipo(i)}
                       </option>
                     ))}
-                    <option value="Otro">Otro</option>
+                    <option value="Otro">{b.otro}</option>
                   </Select>
                 </Field>
               </div>
 
               <Field
-                label="Algo más que debamos saber"
+                label={b.notas}
                 error={errors.notes?.message}
                 htmlFor="notes"
                
-                hint="Si llevan comida, música, decoración o necesitan llegar más temprano."
+                hint={b.notasHint}
               >
                 <Textarea
                   id="notes"
@@ -229,12 +248,12 @@ export function BookingForm({
 
               <div className="flex flex-col gap-4 border-t border-forest-900/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm leading-relaxed text-stone-600">
-                  Al enviarla, la fecha queda <strong className="text-forest-900">pendiente</strong>, no
-                  confirmada.
+                  {b.pendienteAntes} <strong className="text-forest-900">{b.pendiente}</strong>
+                  {b.pendienteDespues}
                 </p>
                 <button type="submit" disabled={mutation.isPending} className="boton w-full disabled:opacity-60 sm:w-auto">
                   {mutation.isPending && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-                  Enviar solicitud
+                  {b.enviar}
                 </button>
               </div>
             </form>

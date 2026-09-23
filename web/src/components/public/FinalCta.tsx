@@ -1,5 +1,6 @@
 import { imageSrcSet, imageUrl } from '@/lib/image'
 import { whatsappLink } from '@/lib/format'
+import { useT } from '@/lib/i18n'
 import type { GalleryImage, Ranch } from '@/types'
 
 const FALLBACK =
@@ -11,6 +12,7 @@ const FALLBACK =
  */
 export function FinalCta({ ranch, image }: { ranch: Ranch; image?: GalleryImage }) {
   const fondo = image?.url ?? FALLBACK
+  const t = useT()
   const go = () =>
     document.getElementById('disponibilidad')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
@@ -30,18 +32,17 @@ export function FinalCta({ ranch, image }: { ranch: Ranch; image?: GalleryImage 
 
       <div className="container-page relative py-24 text-center sm:py-32">
         <h2 className="mx-auto max-w-3xl font-display text-5xl leading-[0.95] font-bold text-cream-50 sm:text-6xl lg:text-7xl">
-          ¿Qué fecha tenés en mente?
+          {t.cierre.titulo}
         </h2>
         <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-cream-50/85">
-          Contanos qué están celebrando y cuántos vienen. Te decimos al momento si la fecha está
-          libre.
+          {t.cierre.intro}
         </p>
 
         {ranch.contact.whatsapp && (
           <div className="mt-10">
-            <p className="rotulo text-gold-500">Escribinos por WhatsApp</p>
+            <p className="rotulo text-gold-500">{t.cierre.whatsapp}</p>
             <a
-              href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar la disponibilidad del rancho.')}
+              href={whatsappLink(ranch.contact.whatsapp, t.whatsapp.disponibilidad)}
               target="_blank"
               rel="noreferrer"
               className="mt-2 inline-block font-mono text-5xl tracking-tight text-cream-50 underline decoration-gold-500/60 decoration-2 underline-offset-8 transition-[text-decoration-color] hover:decoration-gold-500 sm:text-7xl"
@@ -53,7 +54,7 @@ export function FinalCta({ ranch, image }: { ranch: Ranch; image?: GalleryImage 
 
         <div className="mt-10">
           <button onClick={go} className="boton boton-claro">
-            Ver fechas libres
+            {t.cierre.cta}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
-import { ArrowDown, ArrowUp, Image as ImageIcon, Star, Trash2, Upload } from 'lucide-react'
+import { ArrowDown, ArrowUp, Image as ImageIcon, Pencil, Star, Trash2, Upload } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { EnIngles, textoOpcional } from '@/components/admin/EnIngles'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Field, Input } from '@/components/ui/Field'
@@ -23,8 +24,28 @@ export default function GalleryPage() {
   const fileInput = useRef<HTMLInputElement>(null)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [toDelete, setToDelete] = useState<GalleryImage | null>(null)
-  const [meta, setMeta] = useState({ title: '', category: '', url: '' })
+  const [meta, setMeta] = useState({ title: '', title_en: '', category: '', url: '' })
   const [file, setFile] = useState<File | null>(null)
+  const [editing, setEditing] = useState<GalleryImage | null>(null)
+  const [textos, setTextos] = useState({ title: '', title_en: '' })
+
+  const openEdit = (image: GalleryImage) => {
+    setEditing(image)
+    setTextos({ title: image.title ?? '', title_en: image.translations?.en?.title ?? '' })
+  }
+
+  const saveEdit = async () => {
+    if (!editing) return
+    await update.mutateAsync({
+      id: editing.id,
+      input: {
+        title: textoOpcional(textos.title),
+        // Se conservan el alt y el pie en inglés que ya tenga la foto.
+        translations: { en: { ...editing.translations?.en, title: textoOpcional(textos.title_en) } },
+      },
+    })
+    setEditing(null)
+  }
 
   const submit = async () => {
     // Se acepta archivo local o URL externa (útil para placeholders).
@@ -33,12 +54,18 @@ export default function GalleryPage() {
       data.append('image', file)
       if (meta.title) data.append('title', meta.title)
       if (meta.category) data.append('category', meta.category)
+      if (meta.title_en.trim()) data.append('translations[en][title]', meta.title_en.trim())
       await create.mutateAsync(data)
     } else if (meta.url) {
-      await create.mutateAsync({ path: meta.url, title: meta.title, category: meta.category } as never)
+      await create.mutateAsync({
+        path: meta.url,
+        title: meta.title,
+        category: meta.category,
+        translations: { en: { title: textoOpcional(meta.title_en) } },
+      } as never)
     }
     setFile(null)
-    setMeta({ title: '', category: '', url: '' })
+    setMeta({ title: '', title_en: '', category: '', url: '' })
     setUploadOpen(false)
   }
 
@@ -107,6 +134,9 @@ export default function GalleryPage() {
                 <p className="truncate text-sm font-medium text-forest-900">
                   {image.title || 'Sin título'}
                 </p>
+                {image.translations?.en?.title && (
+                  <p lang="en" className="truncate text-xs text-stone-600">EN · {image.translations.en.title}</p>
+                )}
                 {image.category && (
                   <p className="mt-0.5 text-xs capitalize text-stone-600">
                     {image.category.replace(/-/g, ' ')}
@@ -135,6 +165,14 @@ export default function GalleryPage() {
                   </button>
 
                   <div className="ml-auto flex gap-1">
+                    <button
+                      onClick={() => openEdit(image)}
+                      aria-label="Editar título"
+                      title="Editar título"
+                      className="rounded-lg border border-forest-900/12 p-1.5 text-stone-600 transition-colors hover:bg-forest-900/5"
+                    >
+                      <Pencil className="size-3.5" />
+                    </button>
                     <button
                       onClick={() => move(index, -1)}
                       disabled={index === 0}
@@ -219,6 +257,37 @@ export default function GalleryPage() {
               <Input id="g_cat" value={meta.category} onChange={(e) => setMeta({ ...meta, category: e.target.value })} />
             </Field>
           </div>
+
+          <EnIngles>
+            <Field label="Título" htmlFor="g_title_en">
+              <Input id="g_title_en" lang="en" value={meta.title_en} onChange={(e) => setMeta({ ...meta, title_en: e.target.value })} />
+            </Field>
+          </EnIngles>
+        </div>
+      </Modal>
+
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        title="Editar título"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setEditing(null)}>Cancelar</Button>
+            <Button onClick={saveEdit} loading={update.isPending}>
+              Guardar
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-5">
+          <Field label="Título" htmlFor="g_edit_title">
+            <Input id="g_edit_title" value={textos.title} onChange={(e) => setTextos({ ...textos, title: e.target.value })} />
+          </Field>
+          <EnIngles>
+            <Field label="Título" htmlFor="g_edit_title_en">
+              <Input id="g_edit_title_en" lang="en" value={textos.title_en} onChange={(e) => setTextos({ ...textos, title_en: e.target.value })} />
+            </Field>
+          </EnIngles>
         </div>
       </Modal>
 

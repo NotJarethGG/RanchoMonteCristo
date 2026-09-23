@@ -7,6 +7,7 @@ use App\Http\Resources\GalleryImageResource;
 use App\Models\GalleryImage;
 use App\Models\Ranch;
 use App\Services\CloudinaryUploader;
+use App\Support\Translations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -35,6 +36,11 @@ class GalleryController extends Controller
             'category' => ['nullable', 'string', 'max:60'],
             'is_featured' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
+            ...Translations::rules([
+                'title' => ['string', 'max:150'],
+                'caption' => ['string', 'max:255'],
+                'alt' => ['string', 'max:255'],
+            ]),
         ]);
 
         // Con Cloudinary configurado la imagen vive fuera del servidor, así que
@@ -80,6 +86,11 @@ class GalleryController extends Controller
             'is_featured' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
             'sort_order' => ['sometimes', 'integer', 'min:0'],
+            ...Translations::rules([
+                'title' => ['string', 'max:150'],
+                'caption' => ['string', 'max:255'],
+                'alt' => ['string', 'max:255'],
+            ]),
         ]);
 
         $galleryImage->update($data);

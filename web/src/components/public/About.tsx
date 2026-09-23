@@ -1,5 +1,6 @@
 import { CalendarHeart, LayoutGrid, MapPin, Users } from 'lucide-react'
 import { formatTime } from '@/lib/format'
+import { direccion, useLang, useT, useTr } from '@/lib/i18n'
 import type { Ranch } from '@/types'
 
 /**
@@ -7,46 +8,51 @@ import type { Ranch } from '@/types'
  * preguntan. Todo sale de la configuración del rancho.
  */
 export function About({ ranch }: { ranch: Ranch }) {
+  const lang = useLang()
+  const t = useT().about
+  const tr = useTr()
   const horario =
     ranch.check_in_time && ranch.check_out_time
-      ? `De ${formatTime(ranch.check_in_time)} a ${formatTime(ranch.check_out_time)}`
+      ? t.horario(formatTime(ranch.check_in_time, lang), formatTime(ranch.check_out_time, lang))
       : null
+  const eventos = tr(ranch, 'event_types')
+  const areas = tr(ranch, 'areas')
 
   const tarjetas = [
     {
       icon: Users,
-      titulo: 'Capacidad',
-      valor: `Hasta ${ranch.capacity} personas`,
-      detalle: horario ?? 'Espacio cómodo para grupos grandes.',
+      titulo: t.capacidad,
+      valor: t.hasta(ranch.capacity),
+      detalle: horario ?? t.espacio,
     },
     {
       icon: MapPin,
-      titulo: 'Ubicación',
+      titulo: t.ubicacion,
       valor: [ranch.location.city, ranch.location.province].filter(Boolean).join(', ') || '—',
-      detalle: ranch.location.address ?? '',
+      detalle: direccion(ranch, lang) ?? '',
     },
     {
       icon: CalendarHeart,
-      titulo: 'Para qué se usa',
-      valor: `${ranch.event_types.length} tipos de evento`,
-      detalle: ranch.event_types.slice(0, 4).join(' · '),
+      titulo: t.usos,
+      valor: t.tiposEvento(eventos.length),
+      detalle: eventos.slice(0, 4).join(' · '),
     },
     {
       icon: LayoutGrid,
-      titulo: 'Áreas',
-      valor: `${ranch.areas.length} áreas`,
-      detalle: ranch.areas.slice(0, 4).join(' · '),
+      titulo: t.areas,
+      valor: t.nAreas(areas.length),
+      detalle: areas.slice(0, 4).join(' · '),
     },
   ]
 
   return (
     <section id="sobre-el-rancho" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page">
-        <h2 className="titulo-seccion">El lugar</h2>
+        <h2 className="titulo-seccion">{t.titulo}</h2>
 
         {ranch.about && (
           <p className="mt-10 max-w-4xl font-display text-2xl leading-snug text-forest-900 sm:text-[1.7rem]">
-            {ranch.about}
+            {tr(ranch, 'about')}
           </p>
         )}
 

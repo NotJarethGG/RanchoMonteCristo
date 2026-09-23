@@ -40,6 +40,9 @@ class RanchResource extends JsonResource
             'hero_image' => $this->hero_image_path,
             'currency' => config('ranch.currency'),
             'currency_symbol' => config('ranch.currency_symbol'),
+            // Textos en inglés que cargó el propietario. Los que faltan se
+            // muestran en español.
+            'translations' => (object) ($this->translations ?? []),
         ];
     }
 }

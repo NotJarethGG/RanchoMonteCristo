@@ -27,6 +27,27 @@ export interface ApiErrorBody {
   errors?: Record<string, string[]>
 }
 
+// ---------------------------------------------------------------- Idiomas
+
+/**
+ * Textos en otros idiomas que cargó el propietario. El español vive en los
+ * campos normales y es el respaldo de lo que falte.
+ */
+export interface Translations<T> {
+  en?: Partial<T>
+}
+
+export interface RanchTexts {
+  tagline: string | null
+  description: string | null
+  about: string | null
+  policies: string | null
+  address: string | null
+  schedule: { day: string; hours: string }[]
+  event_types: string[]
+  areas: string[]
+}
+
 // ---------------------------------------------------------------- Rancho
 
 export interface Ranch {
@@ -56,6 +77,7 @@ export interface Ranch {
   hero_image: string | null
   currency: string
   currency_symbol: string
+  translations?: Translations<RanchTexts>
 }
 
 export interface Service {
@@ -67,6 +89,7 @@ export interface Service {
   image: string | null
   is_active: boolean
   sort_order: number
+  translations?: Translations<{ name: string | null; description: string | null }>
 }
 
 export interface GalleryImage {
@@ -79,6 +102,7 @@ export interface GalleryImage {
   is_featured: boolean
   is_active: boolean
   sort_order: number
+  translations?: Translations<{ title: string | null; caption: string | null; alt: string | null }>
 }
 
 export interface Testimonial {
@@ -91,6 +115,7 @@ export interface Testimonial {
   event_date: string | null
   is_published: boolean
   sort_order: number
+  translations?: Translations<{ event_type: string | null; content: string | null }>
 }
 
 export interface LandingPayload {
@@ -115,6 +140,8 @@ export interface AvailabilityDay {
 export interface QuoteLine {
   rule_id: number
   name: string
+  /** Nombre en inglés, si se cargó. */
+  name_en?: string | null
   type: string
   amount_type: string
   amount: number
@@ -175,6 +202,8 @@ export interface Reservation {
   status: ReservationStatus
   status_label: string
   source: string
+  /** Idioma en que se pidió desde el sitio: 'es' o 'en'. */
+  locale?: string
   totals: {
     total: number
     deposit: number
@@ -249,6 +278,7 @@ export interface PricingRule {
   priority: number
   is_active: boolean
   description: string | null
+  translations?: Translations<{ name: string | null }>
 }
 
 export interface PricingMeta {

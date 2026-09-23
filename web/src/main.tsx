@@ -12,7 +12,7 @@ import './index.css'
 // código de la página. Sin esto la petición salía recién cuando la página
 // terminaba de cargar y montarse: una ida y vuelta más antes de poder mostrar
 // la foto principal (era la mayor parte del LCP).
-if (window.location.pathname === '/') {
+if (window.location.pathname === '/' || window.location.pathname === '/en') {
   void queryClient.prefetchQuery(landingQuery)
 }
 

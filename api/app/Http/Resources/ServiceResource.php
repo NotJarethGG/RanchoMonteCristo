@@ -18,6 +18,9 @@ class ServiceResource extends JsonResource
             'image' => $this->image_path,
             'is_active' => $this->is_active,
             'sort_order' => $this->sort_order,
+            // Textos en inglés que cargó el propietario. Los que faltan se
+            // muestran en español.
+            'translations' => (object) ($this->translations ?? []),
         ];
     }
 }

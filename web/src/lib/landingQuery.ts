@@ -12,7 +12,8 @@ import type { LandingPayload } from '@/types'
  * es la diferencia entre ver el sitio y mirar un spinner. Solo se guarda
  * contenido público (el rancho, servicios, galería y testimonios).
  */
-const LANDING_CACHE_KEY = 'rmc.landing.v1'
+// v2: la respuesta trae las traducciones al inglés.
+const LANDING_CACHE_KEY = 'rmc.landing.v2'
 const LANDING_CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000
 
 export function readCachedLanding(): LandingPayload | undefined {

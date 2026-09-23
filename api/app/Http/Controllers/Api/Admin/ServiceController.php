@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ServiceResource;
 use App\Models\Ranch;
 use App\Models\Service;
+use App\Support\Translations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -76,6 +77,10 @@ class ServiceController extends Controller
             'image_path' => ['nullable', 'string', 'max:500'],
             'is_active' => ['sometimes', 'boolean'],
             'sort_order' => ['sometimes', 'integer', 'min:0'],
+            ...Translations::rules([
+                'name' => ['string', 'max:120'],
+                'description' => ['string', 'max:1000'],
+            ]),
         ]);
     }
 }

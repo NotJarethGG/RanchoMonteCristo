@@ -1,4 +1,5 @@
 import { coordenadas } from '@/lib/format'
+import { direccion, useLang, useT, useTr } from '@/lib/i18n'
 import type { Ranch } from '@/types'
 
 /**
@@ -23,14 +24,17 @@ function mapSrc(lat: number, lng: number) {
  */
 export function Location({ ranch }: { ranch: Ranch }) {
   const { latitude, longitude } = ranch.location
+  const lang = useLang()
+  const t = useT().location
+  const tr = useTr()
   const hasCoords = typeof latitude === 'number' && typeof longitude === 'number'
-  const coords = coordenadas(latitude, longitude)
+  const coords = coordenadas(latitude, longitude, lang)
   const lugar = [ranch.location.city, ranch.location.province].filter(Boolean).join(', ')
 
   return (
     <section id="ubicacion" className="scroll-mt-20 bg-gris-50 py-20 lg:py-28">
       <div className="container-page">
-        <h2 className="titulo-seccion">Cómo llegar</h2>
+        <h2 className="titulo-seccion">{t.titulo}</h2>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
           <figure className="overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft">
@@ -40,7 +44,7 @@ export function Location({ ranch }: { ranch: Ranch }) {
             </figcaption>
             {hasCoords ? (
               <iframe
-                title={`Mapa de la ubicación de ${ranch.name}`}
+                title={t.mapa(ranch.name)}
                 src={mapSrc(latitude!, longitude!)}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -48,16 +52,16 @@ export function Location({ ranch }: { ranch: Ranch }) {
               />
             ) : (
               <div className="flex h-80 items-center justify-center text-sm text-stone-600">
-                La ubicación todavía no está configurada.
+                {t.sinUbicacion}
               </div>
             )}
           </figure>
 
           <div className="flex flex-col gap-10">
             <div>
-              <h3 className="rotulo text-stone-600">Dirección</h3>
+              <h3 className="rotulo text-stone-600">{t.direccion}</h3>
               <p className="mt-3 font-display text-2xl leading-snug font-bold text-forest-900">
-                {ranch.location.address}
+                {direccion(ranch, lang)}
               </p>
               <p className="mt-1 text-lg text-stone-600">{lugar}</p>
 
@@ -68,16 +72,16 @@ export function Location({ ranch }: { ranch: Ranch }) {
                   rel="noreferrer"
                   className="boton mt-6"
                 >
-                  Abrir en Maps
+                  {t.abrirMaps}
                 </a>
               )}
             </div>
 
             {!!ranch.schedule?.length && (
               <div>
-                <h3 className="rotulo text-stone-600">Horarios</h3>
+                <h3 className="rotulo text-stone-600">{t.horarios}</h3>
                 <dl className="mt-3">
-                  {ranch.schedule.map((item) => (
+                  {tr(ranch, 'schedule').map((item) => (
                     <div key={item.day} className="flex items-baseline justify-between gap-3 border-b border-forest-900/10 py-3">
                       <dt className="text-forest-900">{item.day}</dt>
                       <dd className="font-mono text-sm text-forest-900">{item.hours}</dd>

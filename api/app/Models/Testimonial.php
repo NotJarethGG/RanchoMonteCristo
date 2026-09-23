@@ -12,13 +12,14 @@ class Testimonial extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ranch_id', 'author_name', 'event_type', 'rating', 'content',
+        'translations', 'ranch_id', 'author_name', 'event_type', 'rating', 'content',
         'avatar_path', 'event_date', 'is_published', 'sort_order',
     ];
 
     protected function casts(): array
     {
         return [
+            'translations' => 'array',
             'rating' => 'integer',
             'event_date' => 'date',
             'is_published' => 'boolean',

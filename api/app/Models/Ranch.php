@@ -11,7 +11,7 @@ class Ranch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'tagline', 'description', 'about',
+        'translations', 'name', 'slug', 'tagline', 'description', 'about',
         'phone', 'whatsapp', 'email',
         'address', 'city', 'province', 'latitude', 'longitude', 'google_maps_url',
         'capacity', 'check_in_time', 'check_out_time',
@@ -22,6 +22,7 @@ class Ranch extends Model
     protected function casts(): array
     {
         return [
+            'translations' => 'array',
             'schedule' => 'array',
             'socials' => 'array',
             'event_types' => 'array',

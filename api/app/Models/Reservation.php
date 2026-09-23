@@ -21,7 +21,7 @@ class Reservation extends Model
         'event_date', 'start_time', 'end_time', 'guests', 'event_type',
         'notes', 'internal_notes', 'status', 'source',
         'confirmed_at', 'cancelled_at', 'cancellation_reason',
-        'total_amount', 'deposit_amount', 'pricing_breakdown',
+        'total_amount', 'deposit_amount', 'pricing_breakdown', 'locale',
     ];
 
     protected function casts(): array

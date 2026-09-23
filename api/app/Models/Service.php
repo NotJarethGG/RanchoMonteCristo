@@ -12,12 +12,12 @@ class Service extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ranch_id', 'name', 'slug', 'description', 'icon', 'image_path', 'is_active', 'sort_order',
+        'translations', 'ranch_id', 'name', 'slug', 'description', 'icon', 'image_path', 'is_active', 'sort_order',
     ];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean', 'sort_order' => 'integer'];
+        return ['is_active' => 'boolean', 'sort_order' => 'integer', 'translations' => 'array'];
     }
 
     public function ranch(): BelongsTo

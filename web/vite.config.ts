@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import fs from 'node:fs'
 import path from 'node:path'
 
 /**
@@ -42,9 +43,75 @@ function contentSecurityPolicy(apiOrigin: string) {
   ].join('; ')
 }
 
+/**
+ * HTML de la versión en inglés (/en). El SPA traduce la página al cargar,
+ * pero los rastreadores de redes no ejecutan JavaScript, y para Google es
+ * mejor que cada versión traiga desde el HTML su idioma, título y canonical.
+ * Se arma a partir del index.html ya compilado, así comparte los mismos
+ * archivos de JS y CSS. Si un texto de acá deja de existir en index.html, el
+ * build falla en lugar de publicar una versión a medio traducir.
+ */
+function htmlEnIngles(html: string, siteUrl: string) {
+  const cambios: [string, string][] = [
+    ['<html lang="es">', '<html lang="en">'],
+    [
+      '<title>Rancho Montecristo | Alquiler para eventos en Nicoya</title>',
+      '<title>Rancho Montecristo | Event venue rental in Nicoya, Costa Rica</title>',
+    ],
+    [
+      'content="Alquilá el Rancho Montecristo completo en Nicoya, Guanacaste: cumpleaños, bodas, reuniones familiares y eventos de empresa. Rancho techado, áreas verdes y parqueo privado."',
+      'content="Rent all of Rancho Montecristo in Nicoya, Guanacaste, Costa Rica: birthdays, weddings, family gatherings and company events. Covered pavilion, green areas and private parking."',
+    ],
+    [`<link rel="canonical" href="${siteUrl}/" />`, `<link rel="canonical" href="${siteUrl}/en" />`],
+    ['<meta property="og:locale" content="es_CR" />', '<meta property="og:locale" content="en_US" />'],
+    [
+      '<meta property="og:locale:alternate" content="en_US" />',
+      '<meta property="og:locale:alternate" content="es_CR" />',
+    ],
+    [`<meta property="og:url" content="${siteUrl}/" />`, `<meta property="og:url" content="${siteUrl}/en" />`],
+    [
+      '<meta property="og:title" content="Rancho Montecristo · Alquiler para eventos en Nicoya" />',
+      '<meta property="og:title" content="Rancho Montecristo · Event venue rental in Nicoya, Costa Rica" />',
+    ],
+    [
+      'content="Un rancho entero, solo para tu gente. Alquiler del rancho completo para eventos en Nicoya, Guanacaste."',
+      'content="A whole ranch, just for your group. Rent the entire ranch for your event in Nicoya, Guanacaste, Costa Rica."',
+    ],
+    [
+      'content="Logo de Rancho Montecristo: el Cristo sobre el cerro"',
+      'content="Rancho Montecristo logo: the statue of Christ on the hill"',
+    ],
+    [
+      '<meta name="twitter:title" content="Rancho Montecristo · Alquiler para eventos en Nicoya" />',
+      '<meta name="twitter:title" content="Rancho Montecristo · Event venue rental in Nicoya, Costa Rica" />',
+    ],
+    [
+      'Rancho Montecristo — alquiler para eventos en Nicoya, Guanacaste. Este sitio necesita\n        JavaScript para mostrar la disponibilidad y el formulario de reserva.',
+      'Rancho Montecristo — event venue rental in Nicoya, Guanacaste, Costa Rica. This site needs\n        JavaScript to show availability and the booking form.',
+    ],
+  ]
+
+  return cambios.reduce((out, [de, a]) => {
+    if (!out.includes(de)) throw new Error(`Versión en inglés: no se encontró en index.html:\n  ${de}`)
+    return out.replace(de, a)
+  }, html)
+}
+
 function seo(siteUrl: string, apiOrigin: string | null): Plugin {
+  let outDir = 'dist'
+
   return {
     name: 'rancho-seo',
+
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir)
+    },
+
+    writeBundle() {
+      const html = fs.readFileSync(path.join(outDir, 'index.html'), 'utf8')
+      fs.mkdirSync(path.join(outDir, 'en'), { recursive: true })
+      fs.writeFileSync(path.join(outDir, 'en', 'index.html'), htmlEnIngles(html, siteUrl))
+    },
 
     transformIndexHtml: {
       order: 'pre',
@@ -73,15 +140,25 @@ function seo(siteUrl: string, apiOrigin: string | null): Plugin {
         source: `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`,
       })
 
+      // Cada versión declara a la otra (hreflang), como pide Google.
+      const hoy = new Date().toISOString().slice(0, 10)
+      const alternas =
+        `    <xhtml:link rel="alternate" hreflang="es" href="${siteUrl}/" />\n` +
+        `    <xhtml:link rel="alternate" hreflang="en" href="${siteUrl}/en" />\n` +
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${siteUrl}/" />\n`
+      const url = (loc: string, prioridad: string) =>
+        `  <url>\n    <loc>${loc}</loc>\n${alternas}` +
+        `    <lastmod>${hoy}</lastmod>\n` +
+        `    <changefreq>weekly</changefreq>\n    <priority>${prioridad}</priority>\n  </url>\n`
+
       this.emitFile({
         type: 'asset',
         fileName: 'sitemap.xml',
         source:
           '<?xml version="1.0" encoding="UTF-8"?>\n' +
-          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-          `  <url>\n    <loc>${siteUrl}/</loc>\n` +
-          `    <lastmod>${new Date().toISOString().slice(0, 10)}</lastmod>\n` +
-          '    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>\n' +
+          '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
+          url(`${siteUrl}/`, '1.0') +
+          url(`${siteUrl}/en`, '0.8') +
           '</urlset>\n',
       })
     },

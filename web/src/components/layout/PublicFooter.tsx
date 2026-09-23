@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom'
 import { FacebookIcon, InstagramIcon, TiktokIcon } from '@/components/ui/BrandIcons'
 import { coordenadas, telLink, whatsappLink } from '@/lib/format'
+import { direccion, useLang, useT } from '@/lib/i18n'
 import type { Ranch } from '@/types'
 
 export function PublicFooter({ ranch }: { ranch: Ranch }) {
   const year = new Date().getFullYear()
-  const coords = coordenadas(ranch.location.latitude, ranch.location.longitude)
+  const lang = useLang()
+  const t = useT()
+  const coords = coordenadas(ranch.location.latitude, ranch.location.longitude, lang)
   const socials = [
     { key: 'facebook', icon: FacebookIcon, label: 'Facebook' },
     { key: 'instagram', icon: InstagramIcon, label: 'Instagram' },
@@ -18,15 +21,14 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
         <div>
           <img
             src="/marca/logo-completo.webp"
-            alt={`Logo de ${ranch.name}`}
+            alt={t.footer.logo(ranch.name)}
             width={560}
             height={313}
             loading="lazy"
             className="h-auto w-64 sm:w-72"
           />
           <p className="mt-6 max-w-sm leading-relaxed text-cream-50/75">
-            Rancho para eventos y reuniones en {ranch.location.city ?? 'Nicoya'}, Guanacaste. Se
-            alquila completo, un grupo por día.
+            {t.footer.resumen(ranch.location.city ?? 'Nicoya')}
           </p>
 
           <ul className="mt-7 flex gap-3">
@@ -51,7 +53,7 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
         </div>
 
         <div>
-          <h3 className="rotulo text-gold-500">Contacto</h3>
+          <h3 className="rotulo text-gold-500">{t.footer.contacto}</h3>
           <ul className="mt-5 space-y-3">
             {ranch.contact.phone && (
               <li>
@@ -63,7 +65,7 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
             {ranch.contact.whatsapp && (
               <li>
                 <a
-                  href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar por una fecha en el rancho.')}
+                  href={whatsappLink(ranch.contact.whatsapp, t.whatsapp.consulta)}
                   target="_blank"
                   rel="noreferrer"
                   className="underline decoration-cream-50/40 underline-offset-4 hover:text-gold-500"
@@ -86,9 +88,9 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
         </div>
 
         <div>
-          <h3 className="rotulo text-gold-500">Dónde estamos</h3>
+          <h3 className="rotulo text-gold-500">{t.footer.dondeEstamos}</h3>
           <p className="mt-5 leading-relaxed text-cream-50/85">
-            {ranch.location.address}
+            {direccion(ranch, lang)}
             <br />
             {[ranch.location.city, ranch.location.province].filter(Boolean).join(', ')}
           </p>
@@ -102,7 +104,7 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
             © {year} {ranch.name} · Nicoya, Guanacaste, Costa Rica
           </p>
           <Link to="/admin" rel="nofollow" className="hover:text-gold-500">
-            Acceso administrativo
+            {t.footer.admin}
           </Link>
         </div>
       </div>

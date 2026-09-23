@@ -60,6 +60,7 @@ class ReservationService
                 'notes' => $data['notes'] ?? null,
                 'status' => $data['status'] ?? ReservationStatus::Pending->value,
                 'source' => $source->value,
+                'locale' => $data['locale'] ?? 'es',
                 'total_amount' => $data['total_amount'] ?? $quote['total'],
                 'deposit_amount' => $data['deposit_amount'] ?? $quote['deposit'],
                 'pricing_breakdown' => $quote['lines'],

@@ -2,16 +2,15 @@ import { useState } from 'react'
 import { cn } from '@/lib/cn'
 import { coordenadas, whatsappLink } from '@/lib/format'
 import { imageSrcSet, imageUrl } from '@/lib/image'
+import { altDeFoto, useLang, useT, useTr } from '@/lib/i18n'
 import type { GalleryImage, Ranch } from '@/types'
 
 const FALLBACK =
   'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=80'
 
-// Mismos valores que tiene la base: se muestran mientras responde la API para
-// que el titular pinte de inmediato (es el elemento del LCP).
-const DEFAULT_TAGLINE = 'Un rancho entero, solo para tu gente.'
-const DEFAULT_DESCRIPTION =
-  'Alquilamos el Rancho Montecristo completo para cumpleaños, bodas, reuniones familiares y paseos. Ese día no hay otros grupos: el lugar es de ustedes.'
+// Mientras responde la API se muestran el titular y la descripción de
+// `i18n` (los mismos que tiene la base), para que el titular pinte de
+// inmediato: es el elemento del LCP.
 
 interface HeroProps {
   ranch?: Ranch
@@ -28,11 +27,14 @@ interface HeroProps {
  */
 export function Hero({ ranch, cover, loading = false }: HeroProps) {
   const [imageReady, setImageReady] = useState(false)
+  const lang = useLang()
+  const t = useT()
+  const tr = useTr()
   const image = loading ? null : (cover?.url ?? ranch?.hero_image ?? FALLBACK)
   const lugar = ranch
     ? [ranch.location.city, ranch.location.province].filter(Boolean).join(' · ')
     : 'Nicoya · Guanacaste'
-  const coords = ranch ? coordenadas(ranch.location.latitude, ranch.location.longitude) : null
+  const coords = ranch ? coordenadas(ranch.location.latitude, ranch.location.longitude, lang) : null
 
   const go = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -47,7 +49,7 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
             src={imageUrl(image, 1920)}
             srcSet={imageSrcSet(image, [640, 960, 1280, 1920, 2560])}
             sizes="100vw"
-            alt={cover?.alt ?? 'Vista del rancho'}
+            alt={(cover && altDeFoto(cover, lang)) ?? t.hero.altFoto}
             fetchPriority="high"
             decoding="async"
             ref={(el) => {
@@ -68,7 +70,7 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
         {/* Pie de foto con coordenadas, como la etiqueta de una foto de archivo. */}
         {(cover?.title || coords) && (
           <p className="rotulo absolute top-5 right-5 hidden max-w-[55%] text-right text-cream-50/80 sm:block">
-            {[cover?.title, coords].filter(Boolean).join('  ·  ')}
+            {[cover && tr(cover, 'title'), coords].filter(Boolean).join('  ·  ')}
           </p>
         )}
 
@@ -77,25 +79,25 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
             <p className="rotulo text-gold-500">{lugar} · Costa Rica</p>
 
             <h1 className="mt-5 font-display text-[2.75rem] leading-[0.95] font-bold text-cream-50 sm:text-6xl lg:text-7xl">
-              {ranch?.tagline ?? DEFAULT_TAGLINE}
+              {(ranch && tr(ranch, 'tagline')) ?? t.hero.tagline}
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-cream-50/85">
-              {ranch?.description ?? DEFAULT_DESCRIPTION}
+              {(ranch && tr(ranch, 'description')) ?? t.hero.description}
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
               <button onClick={() => go('disponibilidad')} className="boton boton-claro">
-                Ver fechas libres
+                {t.hero.cta}
               </button>
               {ranch?.contact.whatsapp && (
                 <a
-                  href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar por una fecha en el rancho.')}
+                  href={whatsappLink(ranch.contact.whatsapp, t.whatsapp.consulta)}
                   target="_blank"
                   rel="noreferrer"
                   className="enlace text-cream-50 decoration-gold-500"
                 >
-                  o escribinos al {ranch.contact.phone}
+                  {t.hero.escribinos} {ranch.contact.phone}
                 </a>
               )}
             </div>

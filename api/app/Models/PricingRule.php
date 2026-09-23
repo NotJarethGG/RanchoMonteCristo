@@ -14,7 +14,7 @@ class PricingRule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ranch_id', 'name', 'type', 'amount_type', 'amount',
+        'translations', 'ranch_id', 'name', 'type', 'amount_type', 'amount',
         'starts_on', 'ends_on', 'weekdays', 'min_guests', 'max_guests',
         'priority', 'is_active', 'description',
     ];
@@ -22,6 +22,7 @@ class PricingRule extends Model
     protected function casts(): array
     {
         return [
+            'translations' => 'array',
             'type' => PricingRuleType::class,
             'amount_type' => AmountType::class,
             'amount' => 'decimal:2',

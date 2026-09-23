@@ -53,6 +53,7 @@ class PricingService
             $lines[] = [
                 'rule_id' => $rule->id,
                 'name' => $rule->name,
+                'name_en' => $rule->translations['en']['name'] ?? null,
                 'type' => $rule->type->value,
                 'amount_type' => $rule->amount_type->value,
                 'amount' => (float) $rule->amount,

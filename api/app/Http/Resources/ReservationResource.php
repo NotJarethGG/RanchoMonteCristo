@@ -25,6 +25,7 @@ class ReservationResource extends JsonResource
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'source' => $this->source->value,
+            'locale' => $this->locale ?? 'es',
 
             'totals' => [
                 'total' => (float) $this->total_amount,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TestimonialResource;
 use App\Models\Ranch;
 use App\Models\Testimonial;
+use App\Support\Translations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -55,6 +56,10 @@ class TestimonialController extends Controller
             'event_date' => ['nullable', 'date'],
             'is_published' => ['sometimes', 'boolean'],
             'sort_order' => ['sometimes', 'integer', 'min:0'],
+            ...Translations::rules([
+                'event_type' => ['string', 'max:80'],
+                'content' => ['string', 'max:1000'],
+            ]),
         ]);
     }
 }

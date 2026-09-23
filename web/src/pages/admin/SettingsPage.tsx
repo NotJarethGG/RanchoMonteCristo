@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Building2, MapPin, Phone, Save, Share2, Trash2, Plus } from 'lucide-react'
+import { Building2, Languages, MapPin, Phone, Save, Share2, Trash2, Plus } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -17,7 +17,21 @@ type FormState = {
   socials: Record<string, string>
   event_types: string[]
   areas: string[]
+  en: TextosEnIngles
 }
+
+/**
+ * Versión en inglés. Las listas se guardan como «texto en español → en
+ * inglés», así siguen alineadas aunque se agreguen o quiten elementos.
+ */
+type TextosEnIngles = {
+  tagline: string; description: string; about: string; address: string; policies: string
+  event_types: Record<string, string>
+  areas: Record<string, string>
+}
+
+const emparejar = (es: string[], en: string[] | undefined) =>
+  Object.fromEntries(es.map((item, i) => [item, en?.[i] && en.length === es.length ? en[i] : '']))
 
 const SOCIAL_KEYS = ['facebook', 'instagram', 'tiktok'] as const
 
@@ -41,6 +55,15 @@ export default function SettingsPage() {
       socials: Object.fromEntries(SOCIAL_KEYS.map((key) => [key, ranch.socials?.[key] ?? ''])),
       event_types: ranch.event_types ?? [],
       areas: ranch.areas ?? [],
+      en: {
+        tagline: ranch.translations?.en?.tagline ?? '',
+        description: ranch.translations?.en?.description ?? '',
+        about: ranch.translations?.en?.about ?? '',
+        address: ranch.translations?.en?.address ?? '',
+        policies: ranch.translations?.en?.policies ?? '',
+        event_types: emparejar(ranch.event_types ?? [], ranch.translations?.en?.event_types),
+        areas: emparejar(ranch.areas ?? [], ranch.translations?.en?.areas),
+      },
     })
   }, [ranch])
 
@@ -55,9 +78,31 @@ export default function SettingsPage() {
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev))
 
+  const setEn = <K extends keyof TextosEnIngles>(key: K, value: TextosEnIngles[K]) =>
+    setForm((prev) => (prev ? { ...prev, en: { ...prev.en, [key]: value } } : prev))
+
+  // Una lista va traducida completa o no va: lo que falte se completa con el
+  // español, y si no hay nada en inglés se manda vacía (el sitio usa el español).
+  const listaEn = (es: string[], en: Record<string, string>) =>
+    es.some((item) => en[item]?.trim()) ? es.map((item) => en[item]?.trim() || item) : []
+
+  const { en, ...general } = form
   const save = () =>
     update.mutate({
-      ...form,
+      ...general,
+      translations: {
+        en: {
+          tagline: en.tagline.trim() || null,
+          description: en.description.trim() || null,
+          about: en.about.trim() || null,
+          address: en.address.trim() || null,
+          policies: en.policies.trim() || null,
+          event_types: listaEn(form.event_types, en.event_types),
+          areas: listaEn(form.areas, en.areas),
+          // El horario no se edita desde el panel: se conserva el que hay.
+          schedule: ranch?.translations?.en?.schedule,
+        },
+      },
       capacity: form.capacity ? Number(form.capacity) : undefined,
       latitude: form.latitude ? Number(form.latitude) : undefined,
       longitude: form.longitude ? Number(form.longitude) : undefined,
@@ -203,6 +248,48 @@ export default function SettingsPage() {
             />
           </CardBody>
         </Card>
+
+        <Card className="xl:col-span-2">
+          <CardHeader
+            title="Versión en inglés"
+            description="Lo que se ve en la página en inglés (/en). Lo que dejés vacío aparece en español."
+            action={<Languages className="size-4 text-stone-600" />}
+          />
+          <CardBody className="grid gap-5 lg:grid-cols-2">
+            <div className="space-y-5">
+              <Field label="Frase principal (inglés)" hint={form.tagline} htmlFor="st_en_tagline">
+                <Input id="st_en_tagline" lang="en" value={en.tagline} onChange={(e) => setEn('tagline', e.target.value)} />
+              </Field>
+              <Field label="Subtítulo (inglés)" htmlFor="st_en_desc">
+                <Textarea id="st_en_desc" lang="en" className="min-h-20" value={en.description} onChange={(e) => setEn('description', e.target.value)} />
+              </Field>
+              <Field label="Sobre el rancho (inglés)" htmlFor="st_en_about">
+                <Textarea id="st_en_about" lang="en" className="min-h-32" value={en.about} onChange={(e) => setEn('about', e.target.value)} />
+              </Field>
+              <Field label="Dirección (inglés)" hint={form.address} htmlFor="st_en_addr">
+                <Input id="st_en_addr" lang="en" value={en.address} onChange={(e) => setEn('address', e.target.value)} />
+              </Field>
+              <Field label="Políticas (inglés)" htmlFor="st_en_policies">
+                <Textarea id="st_en_policies" lang="en" className="min-h-40" value={en.policies} onChange={(e) => setEn('policies', e.target.value)} />
+              </Field>
+            </div>
+
+            <div className="space-y-6">
+              <ListaEnIngles
+                label="Tipos de evento (inglés)"
+                items={form.event_types}
+                values={en.event_types}
+                onChange={(values) => setEn('event_types', values)}
+              />
+              <ListaEnIngles
+                label="Áreas (inglés)"
+                items={form.areas}
+                values={en.areas}
+                onChange={(values) => setEn('areas', values)}
+              />
+            </div>
+          </CardBody>
+        </Card>
       </div>
 
       <div className="mt-6 flex justify-end">
@@ -274,6 +361,39 @@ function TagListEditor({
           Agregar
         </Button>
       </div>
+    </div>
+  )
+}
+
+/** Una fila por elemento de la lista en español, con su traducción al lado. */
+function ListaEnIngles({
+  label,
+  items,
+  values,
+  onChange,
+}: {
+  label: string
+  items: string[]
+  values: Record<string, string>
+  onChange: (values: Record<string, string>) => void
+}) {
+  return (
+    <div>
+      <p className="text-sm font-medium text-forest-800">{label}</p>
+      {!items.length && <p className="mt-2 text-sm text-stone-600">Primero agregalos en español.</p>}
+      <ul className="mt-3 space-y-2">
+        {items.map((item) => (
+          <li key={item} className="grid items-center gap-2 sm:grid-cols-[1fr_1.2fr]">
+            <span className="text-sm text-stone-600">{item}</span>
+            <Input
+              lang="en"
+              aria-label={`${item} en inglés`}
+              value={values[item] ?? ''}
+              onChange={(event) => onChange({ ...values, [item]: event.target.value })}
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

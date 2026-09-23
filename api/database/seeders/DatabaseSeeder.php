@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PricingRuleSeeder::class,
             CustomerSeeder::class,
             ReservationSeeder::class,
+            TranslationSeeder::class,
         ]);
     }
 }

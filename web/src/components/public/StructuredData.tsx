@@ -1,4 +1,5 @@
 import { telLink } from '@/lib/format'
+import { HOME_PATH, direccion, traducir, useLang } from '@/lib/i18n'
 import type { GalleryImage, Ranch, Service } from '@/types'
 
 /**
@@ -22,23 +23,26 @@ export function StructuredData({
   gallery: GalleryImage[]
   services: Service[]
 }) {
-  const url = window.location.origin + '/'
+  const lang = useLang()
+  const inicio = window.location.origin + '/'
+  const url = window.location.origin + HOME_PATH[lang]
   const phone = telLink(ranch.contact.phone).replace(/^tel:/, '')
   const { location } = ranch
 
   const data = {
     '@context': 'https://schema.org',
     '@type': ['LocalBusiness', 'EventVenue'],
-    '@id': `${url}#rancho`,
+    // Mismo @id en las dos versiones: es un solo lugar, descrito en dos idiomas.
+    '@id': `${inicio}#rancho`,
     name: ranch.name,
-    description: ranch.about ?? ranch.description ?? undefined,
+    description: traducir(ranch, 'about', lang) ?? traducir(ranch, 'description', lang) ?? undefined,
     url,
     telephone: phone !== '#' ? phone : undefined,
     email: ranch.contact.email ?? undefined,
     image: gallery.slice(0, 6).map((image) => image.url),
     address: {
       '@type': 'PostalAddress',
-      streetAddress: location.address ?? undefined,
+      streetAddress: direccion(ranch, lang) ?? undefined,
       addressLocality: location.city ?? undefined,
       addressRegion: location.province ?? undefined,
       addressCountry: 'CR',
@@ -51,7 +55,7 @@ export function StructuredData({
     maximumAttendeeCapacity: ranch.capacity || undefined,
     amenityFeature: services.map((service) => ({
       '@type': 'LocationFeatureSpecification',
-      name: service.name,
+      name: traducir(service, 'name', lang),
       value: true,
     })),
     sameAs: Object.values(ranch.socials ?? {}).filter(Boolean),

@@ -9,6 +9,7 @@ use App\Http\Resources\PricingRuleResource;
 use App\Models\PricingRule;
 use App\Models\Ranch;
 use App\Services\PricingService;
+use App\Support\Translations;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -84,6 +85,7 @@ class PricingRuleController extends Controller
             'priority' => ['sometimes', 'integer', 'min:0', 'max:999'],
             'is_active' => ['sometimes', 'boolean'],
             'description' => ['nullable', 'string', 'max:500'],
+            ...Translations::rules(['name' => ['string', 'max:120']]),
         ]);
     }
 }

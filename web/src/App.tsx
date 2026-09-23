@@ -35,7 +35,10 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<PageFallback />}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Misma página en los dos idiomas: al cambiar, React la conserva y
+              solo cambian los textos (no se pierde la fecha elegida). */}
+          <Route path="/" element={<HomePage lang="es" />} />
+          <Route path="/en" element={<HomePage lang="en" />} />
           <Route path="/admin/login" element={<LoginPage />} />
 
           <Route element={<ProtectedRoute />}>

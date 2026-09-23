@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CalendarDays, ChevronRight, Users } from 'lucide-react'
-import { PaymentBadge, StatusBadge } from '@/components/ui/Badge'
+import { LocaleBadge, PaymentBadge, StatusBadge } from '@/components/ui/Badge'
 import { formatDateShort, formatMoney, formatTimeRange } from '@/lib/format'
 import type { Reservation } from '@/types'
 
@@ -21,7 +21,10 @@ export function ReservationCard({ reservation }: { reservation: Reservation }) {
           </p>
           <p className="mt-0.5 font-mono text-xs text-stone-600">{reservation.code}</p>
         </div>
-        <StatusBadge status={reservation.status} label={reservation.status_label} />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <StatusBadge status={reservation.status} label={reservation.status_label} />
+          <LocaleBadge locale={reservation.locale} />
+        </div>
       </div>
 
       <dl className="mt-3.5 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">

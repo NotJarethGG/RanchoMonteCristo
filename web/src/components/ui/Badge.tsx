@@ -98,3 +98,13 @@ export const dayStatusStyles: Record<DayStatus, { dot: string; label: string; ce
   },
   past: { dot: 'bg-sand-300', label: 'Pasado', cell: 'bg-transparent text-sand-300' },
 }
+
+/** Solicitud hecha desde la versión en inglés del sitio: hay que contestarle en inglés. */
+export function LocaleBadge({ locale }: { locale?: string }) {
+  if (locale !== 'en') return null
+  return (
+    <Badge tone="info">
+      <span title="La pidió desde la página en inglés">Inglés</span>
+    </Badge>
+  )
+}

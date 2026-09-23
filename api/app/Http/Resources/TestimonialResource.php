@@ -19,6 +19,9 @@ class TestimonialResource extends JsonResource
             'event_date' => $this->event_date?->toDateString(),
             'is_published' => $this->is_published,
             'sort_order' => $this->sort_order,
+            // Textos en inglés que cargó el propietario. Los que faltan se
+            // muestran en español.
+            'translations' => (object) ($this->translations ?? []),
         ];
     }
 }

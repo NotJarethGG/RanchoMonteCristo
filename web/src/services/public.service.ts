@@ -11,6 +11,7 @@ export interface ReservationRequestInput {
   guests: number
   event_type?: string
   notes?: string
+  locale?: 'es' | 'en'
 }
 
 export const publicService = {

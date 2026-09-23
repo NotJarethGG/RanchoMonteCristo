@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { MessageSquareQuote, Pencil, Plus, Star, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/admin/PageHeader'
+import { EnIngles, textoOpcional } from '@/components/admin/EnIngles'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Field, Input, Select, Switch, Textarea } from '@/components/ui/Field'
@@ -22,6 +23,8 @@ const EMPTY = {
   event_date: '',
   is_published: true,
   sort_order: 0,
+  event_type_en: '',
+  content_en: '',
 }
 
 export default function TestimonialsPage() {
@@ -47,6 +50,8 @@ export default function TestimonialsPage() {
             event_date: testimonial.event_date ?? '',
             is_published: testimonial.is_published,
             sort_order: testimonial.sort_order,
+            event_type_en: testimonial.translations?.en?.event_type ?? '',
+            content_en: testimonial.translations?.en?.content ?? '',
           }
         : { ...EMPTY, sort_order: testimonials?.length ?? 0 },
     )
@@ -54,7 +59,12 @@ export default function TestimonialsPage() {
   }
 
   const submit = async () => {
-    const payload = { ...form, event_date: form.event_date || undefined }
+    const { event_type_en, content_en, ...datos } = form
+    const payload = {
+      ...datos,
+      event_date: form.event_date || undefined,
+      translations: { en: { event_type: textoOpcional(event_type_en), content: textoOpcional(content_en) } },
+    }
     if (editing) await update.mutateAsync({ id: editing.id, input: payload })
     else await create.mutateAsync(payload)
     setOpen(false)
@@ -160,6 +170,18 @@ export default function TestimonialsPage() {
           <Field label="Opinión" required htmlFor="t_content">
             <Textarea id="t_content" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
           </Field>
+
+          <EnIngles>
+            <p className="text-xs leading-relaxed text-stone-600">
+              En la página en inglés la opinión traducida lleva la nota «Translated from Spanish».
+            </p>
+            <Field label="Tipo de evento" htmlFor="t_type_en">
+              <Input id="t_type_en" lang="en" value={form.event_type_en} onChange={(e) => setForm({ ...form, event_type_en: e.target.value })} placeholder="Wedding" />
+            </Field>
+            <Field label="Opinión" htmlFor="t_content_en">
+              <Textarea id="t_content_en" lang="en" value={form.content_en} onChange={(e) => setForm({ ...form, content_en: e.target.value })} />
+            </Field>
+          </EnIngles>
 
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Calificación" htmlFor="t_rating">
