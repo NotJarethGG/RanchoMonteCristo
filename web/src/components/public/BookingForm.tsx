@@ -89,7 +89,7 @@ export function BookingForm({
 
   if (mutation.isSuccess) {
     return (
-      <section id="reservar" className="scroll-mt-20 bg-cream-50 py-20 lg:py-28">
+      <section id="reservar" className="scroll-mt-20 bg-white py-20 lg:py-28">
         <div className="container-page max-w-2xl">
           <div className="relative rounded-xl border border-forest-900/10 bg-white px-8 py-12 text-center shadow-soft sm:px-14">
             {/* Sello de «recibida», como el que se estampa en una boleta. */}
@@ -114,7 +114,7 @@ export function BookingForm({
   }
 
   return (
-    <section id="reservar" className="scroll-mt-20 bg-cream-50 py-20 lg:py-28">
+    <section id="reservar" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Apartá tu fecha</h2>
 

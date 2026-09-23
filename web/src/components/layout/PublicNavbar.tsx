@@ -30,7 +30,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 border-b border-forest-900/10 bg-cream-50/95 backdrop-blur-xl transition-shadow',
+        'sticky top-0 z-40 border-b border-forest-900/10 bg-white/95 backdrop-blur-xl transition-shadow',
         scrolled && 'shadow-soft',
       )}
     >
@@ -86,7 +86,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
       </nav>
 
       {open && (
-        <div className="border-t border-forest-900/10 bg-cream-50 lg:hidden">
+        <div className="border-t border-forest-900/10 bg-white lg:hidden">
           <ul className="container-page divide-y divide-forest-900/15">
             {LINKS.map((link) => (
               <li key={link.id}>

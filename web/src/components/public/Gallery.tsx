@@ -56,7 +56,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   if (!images.length) return null
 
   return (
-    <section id="galeria" className="scroll-mt-20 bg-sand-100 py-20 lg:py-28">
+    <section id="galeria" className="scroll-mt-20 bg-gris-50 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Así se ve</h2>
 

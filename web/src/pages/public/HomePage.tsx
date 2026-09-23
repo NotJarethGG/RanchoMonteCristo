@@ -24,7 +24,7 @@ const BookingForm = lazy(() =>
 /** Reserva el espacio y el ancla `#reservar` mientras llega el formulario. */
 function BookingFormPlaceholder() {
   return (
-    <section id="reservar" className="scroll-mt-20 bg-cream-50 py-20 lg:py-28">
+    <section id="reservar" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page flex min-h-[40rem] items-center justify-center">
         <Spinner className="size-6" />
       </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
 
   if (isError) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-cream-50">
+      <div className="flex min-h-dvh items-center justify-center bg-white">
         <ErrorState message={normalizeError(error).message} onRetry={() => refetch()} />
       </div>
     )
@@ -56,7 +56,7 @@ export default function HomePage() {
     document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
-    <div className="min-h-dvh bg-cream-50 text-forest-900">
+    <div className="min-h-dvh bg-white text-forest-900">
       <PublicNavbar ranch={data?.ranch} />
 
       <main>
@@ -86,7 +86,7 @@ export default function HomePage() {
             <FinalCta ranch={data.ranch} image={closing} />
           </>
         ) : (
-          <div className="flex justify-center bg-cream-50 py-24" role="status" aria-label="Cargando">
+          <div className="flex justify-center bg-white py-24" role="status" aria-label="Cargando">
             <Spinner className="size-6" />
           </div>
         )}

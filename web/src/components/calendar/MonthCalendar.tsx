@@ -25,7 +25,7 @@ import { dayStatusStyles } from '@/components/ui/Badge'
 const RAYADO = 'bg-[repeating-linear-gradient(135deg,rgb(160_87_52/0.18)_0_3px,transparent_3px_7px)]'
 export const diaImpreso: Record<DayStatus, { cell: string; dot: string; label: string }> = {
   available: {
-    cell: 'bg-white text-forest-900 border-forest-900/25 shadow-soft hover:border-clay-600 hover:bg-cream-50',
+    cell: 'bg-white text-forest-900 border-forest-900/30 shadow-soft hover:border-clay-600 hover:bg-gris-50',
     dot: 'bg-white ring-1 ring-forest-900/40',
     label: 'Libre',
   },
@@ -35,8 +35,8 @@ export const diaImpreso: Record<DayStatus, { cell: string; dot: string; label: s
     label: 'Pendiente',
   },
   reserved: {
-    cell: `${RAYADO} bg-cream-50 text-clay-700 border-clay-600/50 line-through decoration-clay-600/60`,
-    dot: `${RAYADO} bg-cream-50 ring-1 ring-clay-600/60`,
+    cell: `${RAYADO} bg-white text-clay-700 border-clay-600/50 line-through decoration-clay-600/60`,
+    dot: `${RAYADO} bg-white ring-1 ring-clay-600/60`,
     label: 'Reservado',
   },
   blocked: {
@@ -106,7 +106,7 @@ export function MonthCalendar({
           className={cn(
             'p-2 transition-colors',
             impreso
-              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-sand-100'
+              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-gris-50'
               : 'rounded-full border border-forest-900/12 text-forest-800 hover:bg-forest-900/5',
           )}
         >
@@ -124,7 +124,7 @@ export function MonthCalendar({
           className={cn(
             'p-2 transition-colors',
             impreso
-              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-sand-100'
+              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-gris-50'
               : 'rounded-full border border-forest-900/12 text-forest-800 hover:bg-forest-900/5',
           )}
         >

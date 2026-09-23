@@ -40,7 +40,7 @@ export function About({ ranch }: { ranch: Ranch }) {
   ]
 
   return (
-    <section id="sobre-el-rancho" className="scroll-mt-20 bg-cream-50 py-20 lg:py-28">
+    <section id="sobre-el-rancho" className="scroll-mt-20 bg-white py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">El lugar</h2>
 

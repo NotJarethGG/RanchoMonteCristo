@@ -33,7 +33,7 @@ export function Availability({
   const { data: quote, isLoading: quoteLoading } = useQuote(selectedDate, guests)
 
   return (
-    <section id="disponibilidad" className="scroll-mt-20 bg-sand-100 py-20 lg:py-28">
+    <section id="disponibilidad" className="scroll-mt-20 bg-gris-50 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Fechas libres</h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
@@ -89,7 +89,7 @@ export function Availability({
                       step={5}
                       value={guests}
                       onChange={(event) => onGuestsChange(Number(event.target.value))}
-                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-sand-200 accent-clay-600"
+                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-forest-900/15 accent-clay-600"
                     />
                     <span className="w-14 shrink-0 text-right font-mono text-xl text-forest-900">{guests}</span>
                   </div>
