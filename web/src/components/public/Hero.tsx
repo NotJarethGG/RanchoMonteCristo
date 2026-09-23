@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Greca } from '@/components/brand/Greca'
 import { cn } from '@/lib/cn'
 import { coordenadas, whatsappLink } from '@/lib/format'
 import { imageSrcSet, imageUrl } from '@/lib/image'
@@ -104,7 +103,6 @@ export function Hero({ ranch, cover, loading = false }: HeroProps) {
         </div>
       </div>
 
-      <Greca />
     </section>
   )
 }

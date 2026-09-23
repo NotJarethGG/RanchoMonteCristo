@@ -13,7 +13,7 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
   ] as const
 
   return (
-    <footer className="border-t-2 border-cream-50/20 bg-forest-900 text-cream-50">
+    <footer className="border-t border-cream-50/15 bg-forest-900 text-cream-50">
       <div className="container-page grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.3fr_1fr_1fr]">
         <div>
           <img
@@ -40,7 +40,7 @@ export function PublicFooter({ ranch }: { ranch: Ranch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={label}
-                    className="flex size-10 items-center justify-center border-2 border-cream-50/30 text-cream-50 transition-colors hover:border-gold-500 hover:text-gold-500"
+                    className="flex size-10 items-center justify-center rounded-lg border border-cream-50/25 text-cream-50 transition-colors hover:border-gold-500 hover:text-gold-500"
                   >
                     <Icon className="size-4" />
                   </a>

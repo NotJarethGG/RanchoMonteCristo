@@ -28,13 +28,13 @@ export function Location({ ranch }: { ranch: Ranch }) {
   const lugar = [ranch.location.city, ranch.location.province].filter(Boolean).join(', ')
 
   return (
-    <section id="ubicacion" className="grano scroll-mt-20 bg-sand-100 py-20 lg:py-28">
+    <section id="ubicacion" className="scroll-mt-20 bg-sand-100 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Cómo llegar</h2>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-14">
-          <figure className="border-2 border-forest-900 bg-cream-50">
-            <figcaption className="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b-2 border-forest-900 px-4 py-2.5">
+          <figure className="overflow-hidden rounded-xl border border-forest-900/10 bg-white shadow-soft">
+            <figcaption className="flex flex-wrap justify-between gap-x-6 gap-y-1 border-b border-forest-900/10 px-5 py-3">
               <span className="rotulo text-forest-900">{lugar}</span>
               {coords && <span className="rotulo text-stone-600">{coords}</span>}
             </figcaption>
@@ -78,10 +78,8 @@ export function Location({ ranch }: { ranch: Ranch }) {
                 <h3 className="rotulo text-stone-600">Horarios</h3>
                 <dl className="mt-3">
                   {ranch.schedule.map((item) => (
-                    <div key={item.day} className="flex items-baseline gap-3 border-b border-dashed border-forest-900/30 py-3">
-                      <dt className="flex flex-1 items-baseline gap-3 text-forest-900 after:min-w-4 after:flex-1 after:translate-y-[-3px] after:border-b-2 after:border-dotted after:border-forest-900/30 after:content-['']">
-                        {item.day}
-                      </dt>
+                    <div key={item.day} className="flex items-baseline justify-between gap-3 border-b border-forest-900/10 py-3">
+                      <dt className="text-forest-900">{item.day}</dt>
                       <dd className="font-mono text-sm text-forest-900">{item.hours}</dd>
                     </div>
                   ))}

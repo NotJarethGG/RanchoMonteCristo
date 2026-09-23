@@ -30,8 +30,8 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
   return (
     <header
       className={cn(
-        'grano sticky top-0 z-40 border-b-2 border-forest-900 bg-cream-50 transition-shadow',
-        scrolled && 'shadow-[0_2px_0_rgb(31_45_35/0.08)]',
+        'sticky top-0 z-40 border-b border-forest-900/10 bg-cream-50/95 backdrop-blur-xl transition-shadow',
+        scrolled && 'shadow-soft',
       )}
     >
       <nav className="container-page flex h-16 items-center justify-between gap-6 lg:h-20">
@@ -78,7 +78,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
           aria-expanded={open}
-          className="flex items-center gap-2 border-2 border-forest-900 px-3 py-1.5 font-mono text-xs tracking-[0.15em] text-forest-900 uppercase lg:hidden"
+          className="flex items-center gap-2 rounded-lg border border-forest-900/20 px-3 py-1.5 font-mono text-xs tracking-[0.15em] text-forest-900 uppercase lg:hidden"
         >
           {open ? <X className="size-4" aria-hidden="true" /> : <Menu className="size-4" aria-hidden="true" />}
           Menú
@@ -86,7 +86,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
       </nav>
 
       {open && (
-        <div className="border-t-2 border-forest-900 bg-cream-50 lg:hidden">
+        <div className="border-t border-forest-900/10 bg-cream-50 lg:hidden">
           <ul className="container-page divide-y divide-forest-900/15">
             {LINKS.map((link) => (
               <li key={link.id}>
@@ -99,7 +99,7 @@ export function PublicNavbar({ ranch }: { ranch?: Ranch }) {
               </li>
             ))}
           </ul>
-          <div className="container-page flex flex-col gap-3 border-t-2 border-forest-900 py-5">
+          <div className="container-page flex flex-col gap-3 border-t border-forest-900/10 py-5">
             <button onClick={() => go('reservar')} className="boton w-full">
               Apartar fecha
             </button>

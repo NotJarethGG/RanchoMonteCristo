@@ -25,8 +25,8 @@ import { dayStatusStyles } from '@/components/ui/Badge'
 const RAYADO = 'bg-[repeating-linear-gradient(135deg,rgb(160_87_52/0.18)_0_3px,transparent_3px_7px)]'
 export const diaImpreso: Record<DayStatus, { cell: string; dot: string; label: string }> = {
   available: {
-    cell: 'bg-[#fbf8f2] text-forest-900 border-forest-900/35 hover:border-clay-600 hover:bg-white',
-    dot: 'bg-[#fbf8f2] ring-1 ring-forest-900/50',
+    cell: 'bg-white text-forest-900 border-forest-900/25 shadow-soft hover:border-clay-600 hover:bg-cream-50',
+    dot: 'bg-white ring-1 ring-forest-900/40',
     label: 'Libre',
   },
   pending: {
@@ -61,8 +61,8 @@ export interface MonthCalendarProps {
   loading?: boolean
   /** Contenido extra por día (p. ej. nombre del cliente en el admin). */
   renderDayExtra?: (date: string) => React.ReactNode
-  /** Estilo impreso del sitio público: celdas rectas y colores de la paleta
-   *  de barro. El panel conserva sus colores de estado habituales. */
+  /** Estilo del sitio público: colores de la paleta de la portada y días
+   *  reservados rayados. El panel conserva sus colores de estado habituales. */
   impreso?: boolean
   className?: string
 }
@@ -106,7 +106,7 @@ export function MonthCalendar({
           className={cn(
             'p-2 transition-colors',
             impreso
-              ? 'border-2 border-forest-900 text-forest-900 hover:bg-sand-100'
+              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-sand-100'
               : 'rounded-full border border-forest-900/12 text-forest-800 hover:bg-forest-900/5',
           )}
         >
@@ -124,7 +124,7 @@ export function MonthCalendar({
           className={cn(
             'p-2 transition-colors',
             impreso
-              ? 'border-2 border-forest-900 text-forest-900 hover:bg-sand-100'
+              ? 'rounded-lg border border-forest-900/15 text-forest-900 hover:bg-sand-100'
               : 'rounded-full border border-forest-900/12 text-forest-800 hover:bg-forest-900/5',
           )}
         >
@@ -167,7 +167,7 @@ export function MonthCalendar({
               aria-pressed={isSelected}
               className={cn(
                 'relative flex aspect-square flex-col items-center justify-center border text-sm transition-all duration-150',
-                impreso ? 'rounded-none' : 'rounded-xl',
+                impreso ? 'rounded-lg' : 'rounded-xl',
                 outside && 'pointer-events-none opacity-0',
                 !outside && 'border-forest-900/8',
                 !outside && styles.cell,
@@ -200,7 +200,7 @@ export function CalendarLegend({ items, impreso = false }: { items?: DayStatus[]
     <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
       {shown.map((status) => (
         <li key={status} className={cn('flex items-center gap-2 text-sm', impreso ? 'text-forest-900' : 'text-stone-600')}>
-          <span className={cn(impreso ? 'size-3.5' : 'size-2.5 rounded-full', estilos[status].dot)} />
+          <span className={cn(impreso ? 'size-3.5 rounded' : 'size-2.5 rounded-full', estilos[status].dot)} />
           {estilos[status].label}
         </li>
       ))}

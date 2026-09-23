@@ -10,7 +10,7 @@ export function Services({ services = [] }: { services?: Service[] }) {
   if (!services.length) return null
 
   return (
-    <section id="servicios" className="grano scroll-mt-20 bg-cream-50 py-20 lg:py-28">
+    <section id="servicios" className="scroll-mt-20 bg-cream-50 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Lo que hay</h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">

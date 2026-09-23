@@ -56,7 +56,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
   if (!images.length) return null
 
   return (
-    <section id="galeria" className="grano scroll-mt-20 bg-sand-100 py-20 lg:py-28">
+    <section id="galeria" className="scroll-mt-20 bg-sand-100 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Así se ve</h2>
 
@@ -94,7 +94,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
                 <button
                   onClick={() => setOpenIndex(index)}
                   aria-label={`Ampliar foto: ${image.title ?? image.alt ?? 'rancho'}`}
-                  className={cn('group block w-full overflow-hidden bg-forest-900', d.aspecto)}
+                  className={cn('group block w-full overflow-hidden rounded-xl bg-forest-900 shadow-soft transition-shadow hover:shadow-lift', d.aspecto)}
                 >
                   <img
                     src={imageUrl(image.url, d.anchos[1])}
@@ -126,7 +126,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
               srcSet={imageSrcSet(current.url, [960, 1600, 2400])}
               sizes="(min-width: 1152px) 1152px, 100vw"
               alt={current.alt ?? current.title ?? ''}
-              className="max-h-[78vh] w-full object-contain"
+              className="max-h-[78vh] w-full rounded-xl object-contain"
             />
 
             <figcaption className="mt-4 flex items-baseline justify-between gap-4 text-cream-50">
@@ -150,7 +150,7 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
                     aria-label={label}
                     onClick={() => move(dir)}
                     className={cn(
-                      'absolute top-1/2 -translate-y-1/2 border-2 border-forest-900 bg-cream-50 p-2 text-forest-900 transition hover:bg-sand-100',
+                      'absolute top-1/2 -translate-y-1/2 rounded-full bg-cream-50/95 p-2.5 text-forest-900 shadow-lift transition hover:bg-cream-50',
                       side,
                     )}
                   >

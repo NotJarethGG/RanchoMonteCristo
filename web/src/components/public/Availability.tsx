@@ -17,7 +17,7 @@ interface AvailabilityProps {
 
 /**
  * Calendario de fechas libres. Al elegir un día aparece el cálculo del precio
- * con el formato de un recibo: renglones con puntos guía y el total abajo.
+ * con su desglose y el total abajo.
  */
 export function Availability({
   ranch,
@@ -33,7 +33,7 @@ export function Availability({
   const { data: quote, isLoading: quoteLoading } = useQuote(selectedDate, guests)
 
   return (
-    <section id="disponibilidad" className="grano scroll-mt-20 bg-sand-100 py-20 lg:py-28">
+    <section id="disponibilidad" className="scroll-mt-20 bg-sand-100 py-20 lg:py-28">
       <div className="container-page">
         <h2 className="titulo-seccion">Fechas libres</h2>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
@@ -42,7 +42,7 @@ export function Availability({
         </p>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
-          <div className="border-2 border-forest-900 bg-cream-50 p-5 sm:p-7">
+          <div className="rounded-xl border border-forest-900/10 bg-white shadow-soft p-5 sm:p-7">
             {isLoading ? (
               <div className="flex h-96 items-center justify-center">
                 <Spinner className="size-6" />
@@ -60,15 +60,15 @@ export function Availability({
               />
             )}
 
-            <div className="mt-7 border-t-2 border-forest-900 pt-5">
+            <div className="mt-7 border-t border-forest-900/10 pt-5">
               <CalendarLegend items={['available', 'pending', 'reserved', 'blocked']} impreso />
             </div>
           </div>
 
           <div className="flex flex-col gap-8">
             {selectedDate ? (
-              <div className="border-2 border-forest-900 bg-cream-50">
-                <div className="border-b-2 border-forest-900 px-6 py-5">
+              <div className="rounded-xl border border-forest-900/10 bg-white shadow-soft">
+                <div className="border-b border-forest-900/10 px-6 py-5">
                   <p className="rotulo text-clay-600">Fecha elegida</p>
                   <p className="mt-2 font-display text-3xl leading-none font-bold text-forest-900 first-letter:uppercase">
                     {formatWeekday(selectedDate)}
@@ -76,7 +76,7 @@ export function Availability({
                   <p className="mt-1 text-stone-600">{formatDate(selectedDate)}</p>
                 </div>
 
-                <div className="border-b-2 border-forest-900 px-6 py-5">
+                <div className="border-b border-forest-900/10 px-6 py-5">
                   <label htmlFor="availability-guests" className="block text-sm font-semibold text-forest-900">
                     ¿Cuántas personas, más o menos?
                   </label>
@@ -89,13 +89,13 @@ export function Availability({
                       step={5}
                       value={guests}
                       onChange={(event) => onGuestsChange(Number(event.target.value))}
-                      className="h-1.5 w-full cursor-pointer appearance-none bg-forest-900/20 accent-clay-600"
+                      className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-sand-200 accent-clay-600"
                     />
                     <span className="w-14 shrink-0 text-right font-mono text-xl text-forest-900">{guests}</span>
                   </div>
                 </div>
 
-                {/* Recibo: cada regla de precio en un renglón con puntos guía. */}
+                {/* Desglose: cada regla de precio en un renglón. */}
                 <div className="px-6 py-5">
                   {quoteLoading ? (
                     <div className="flex items-center gap-2 text-sm text-stone-600">
@@ -107,14 +107,14 @@ export function Availability({
                         {quote.quote.lines.map((line) => (
                           <li
                             key={line.rule_id}
-                            className="flex items-baseline gap-2 after:order-1 after:min-w-4 after:flex-1 after:translate-y-[-3px] after:border-b-2 after:border-dotted after:border-forest-900/30 after:content-['']"
+                            className="flex items-baseline justify-between gap-4"
                           >
                             <span>{line.name}</span>
-                            <span className="order-2 font-mono tabular-nums">{formatMoney(line.computed)}</span>
+                            <span className="shrink-0 font-mono tabular-nums">{formatMoney(line.computed)}</span>
                           </li>
                         ))}
                       </ul>
-                      <div className="mt-5 flex items-baseline justify-between border-t-2 border-forest-900 pt-4">
+                      <div className="mt-5 flex items-baseline justify-between border-t border-forest-900/10 pt-4">
                         <span className="font-semibold text-forest-900">Total estimado</span>
                         <span className="font-display text-3xl font-bold text-forest-900">
                           {formatMoney(quote.quote.total)}
@@ -134,7 +134,7 @@ export function Availability({
                 </div>
               </div>
             ) : (
-              <div className="flex grow flex-col justify-center border-2 border-dashed border-forest-900/40 p-8">
+              <div className="flex grow flex-col justify-center rounded-xl border border-forest-900/10 bg-white shadow-soft p-8">
                 <p className="font-display text-3xl leading-tight font-bold text-forest-900">
                   <span aria-hidden="true" className="mr-2 hidden text-clay-600 lg:inline">
                     ←

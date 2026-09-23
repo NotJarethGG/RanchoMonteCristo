@@ -1,50 +1,61 @@
-import { Greca } from '@/components/brand/Greca'
+import { imageSrcSet, imageUrl } from '@/lib/image'
 import { whatsappLink } from '@/lib/format'
-import type { Ranch } from '@/types'
+import type { GalleryImage, Ranch } from '@/types'
+
+const FALLBACK =
+  'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=2000&q=80'
 
 /**
- * Cierre en una franja terracota. El número de WhatsApp es el
- * protagonista: en Costa Rica es como la gente de verdad aparta una fecha.
+ * Cierre sobre una foto oscurecida. El número de WhatsApp va en grande: en
+ * Costa Rica es como la gente de verdad aparta una fecha.
  */
-export function FinalCta({ ranch }: { ranch: Ranch }) {
+export function FinalCta({ ranch, image }: { ranch: Ranch; image?: GalleryImage }) {
+  const fondo = image?.url ?? FALLBACK
   const go = () =>
     document.getElementById('disponibilidad')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
-    <section className="bg-clay-600 text-cream-50">
-      <div className="bg-forest-900">
-        <Greca invertida />
-      </div>
+    <section className="relative overflow-hidden">
+      <img
+        src={imageUrl(fondo, 1920)}
+        srcSet={imageSrcSet(fondo, [640, 1280, 1920])}
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 size-full object-cover"
+      />
+      <div className="absolute inset-0 bg-bark-950/78" />
 
-      <div className="container-page py-20 lg:py-28">
-        <h2 className="max-w-4xl font-display text-5xl leading-[0.95] font-bold sm:text-6xl lg:text-7xl">
+      <div className="container-page relative py-24 text-center sm:py-32">
+        <h2 className="mx-auto max-w-3xl font-display text-5xl leading-[0.95] font-bold text-cream-50 sm:text-6xl lg:text-7xl">
           ¿Qué fecha tenés en mente?
         </h2>
+        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-cream-50/85">
+          Contanos qué están celebrando y cuántos vienen. Te decimos al momento si la fecha está
+          libre.
+        </p>
 
         {ranch.contact.whatsapp && (
-          <div className="mt-12">
-            <p className="rotulo text-cream-50">Escribinos por WhatsApp</p>
+          <div className="mt-10">
+            <p className="rotulo text-gold-500">Escribinos por WhatsApp</p>
             <a
               href={whatsappLink(ranch.contact.whatsapp, 'Hola, quisiera consultar la disponibilidad del rancho.')}
               target="_blank"
               rel="noreferrer"
-              className="mt-2 inline-block font-mono text-5xl tracking-tight text-cream-50 underline decoration-cream-50/40 decoration-2 underline-offset-8 transition-[text-decoration-color] hover:decoration-cream-50 sm:text-7xl lg:text-8xl"
+              className="mt-2 inline-block font-mono text-5xl tracking-tight text-cream-50 underline decoration-gold-500/60 decoration-2 underline-offset-8 transition-[text-decoration-color] hover:decoration-gold-500 sm:text-7xl"
             >
               {ranch.contact.phone}
             </a>
           </div>
         )}
 
-        <p className="mt-12 text-lg text-cream-50">
-          O mirá primero{' '}
-          <button
-            onClick={go}
-            className="font-semibold text-cream-50 underline decoration-2 underline-offset-4 hover:decoration-4"
-          >
-            qué fechas están libres
+        <div className="mt-10">
+          <button onClick={go} className="boton">
+            Ver fechas libres
           </button>
-          .
-        </p>
+        </div>
       </div>
     </section>
   )

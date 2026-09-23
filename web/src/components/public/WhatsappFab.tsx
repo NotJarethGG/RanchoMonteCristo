@@ -30,7 +30,7 @@ export function WhatsappFab({ phone }: { phone?: string | null }) {
       target="_blank"
       rel="noreferrer"
       className={cn(
-        'fixed right-3 bottom-3 z-30 flex items-center gap-2 border-2 border-cream-50 bg-forest-900 px-3 py-2 font-display text-base font-bold tracking-wide text-cream-50 uppercase rounded-md shadow-lift transition-all duration-300 hover:-translate-y-0.5 sm:right-6 sm:bottom-6 sm:px-4 sm:py-3 sm:text-lg',
+        'fixed right-3 bottom-3 z-30 flex items-center gap-2 border border-cream-50/20 bg-forest-900 px-3 py-2 rounded-lg font-display text-base font-bold tracking-wide text-cream-50 uppercase shadow-lift transition-all duration-300 hover:-translate-y-0.5 sm:right-6 sm:bottom-6 sm:px-4 sm:py-3 sm:text-lg',
         visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0',
       )}
     >
