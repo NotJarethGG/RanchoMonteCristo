@@ -106,7 +106,7 @@ export function PublicFooter({ ranch }: { ranch?: Ranch }) {
           <p>
             © {year} {ranch?.name ?? 'Rancho Monte Cristo'}. Todos los derechos reservados.
           </p>
-          <Link to="/admin" className="transition-colors hover:text-gold-500">
+          <Link to="/admin" rel="nofollow" className="transition-colors hover:text-gold-500">
             Acceso administrativo
           </Link>
         </div>

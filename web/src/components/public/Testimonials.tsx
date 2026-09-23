@@ -46,14 +46,15 @@ export function Testimonials({ testimonials = [] }: { testimonials?: Testimonial
               </div>
 
               <div className="mt-5 flex items-center gap-3 border-t border-sage-200/12 pt-5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-xs font-semibold text-gold-500">
+                <span aria-hidden="true"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-xs font-semibold text-gold-300">
                   {initials(testimonial.author_name)}
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-cream-50">
                     {testimonial.author_name}
                   </p>
-                  <p className="truncate text-xs text-sage-400">
+                  <p className="truncate text-xs text-sage-300">
                     {[testimonial.event_type, testimonial.event_date && formatDate(testimonial.event_date, 'MMM yyyy')]
                       .filter(Boolean)
                       .join(' · ')}

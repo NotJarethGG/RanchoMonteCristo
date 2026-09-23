@@ -23,6 +23,7 @@ const schema = z
     guests: z.coerce.number().int().min(1, 'Indicá al menos una persona.'),
     event_type: z.string().optional(),
     notes: z.string().max(2000).optional(),
+    website: z.string().optional(),
   })
   .refine((data) => data.end_time > data.start_time, {
     message: 'La salida debe ser después de la entrada.',
@@ -138,6 +139,14 @@ export function BookingForm({
 
           <Card className="p-6 sm:p-8">
             <form onSubmit={onSubmit} noValidate className="space-y-5">
+              {/* Señuelo anti-spam: invisible para personas y lectores de
+                  pantalla, pero los bots completan todos los campos. El
+                  backend descarta la solicitud si llega con valor. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                <label htmlFor="website">No completar este campo</label>
+                <input id="website" type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
+              </div>
+
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field label="Nombre completo" required error={errors.full_name?.message} htmlFor="full_name">
                   <Input id="full_name" placeholder="Ana Rodríguez" invalid={!!errors.full_name} {...register('full_name')} />

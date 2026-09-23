@@ -3,28 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/ranch.svg" />
 
-    <title>Rancho Monte Cristo — Alquiler para eventos y reuniones</title>
+    <title>Rancho Monte Cristo | Alquiler para eventos en Nicoya</title>
     <meta
       name="description"
-      content="Alquilá el Rancho Monte Cristo para tus eventos, reuniones familiares y celebraciones. Rancho techado, áreas verdes, parrillas y parqueo privado en Nicoya, Guanacaste."
+      content="Alquilá el Rancho Monte Cristo completo en Nicoya, Guanacaste: cumpleaños, bodas, reuniones familiares y eventos de empresa. Rancho techado, áreas verdes y parqueo privado."
     />
+    <link rel="canonical" href="%SITE_URL%/" />
     <meta name="theme-color" content="#1F2D23" />
+    <link rel="icon" type="image/svg+xml" href="/ranch.svg" />
 
+    <!-- Tarjeta al compartir en WhatsApp, Facebook, X, etc. Los rastreadores
+         de redes no ejecutan JavaScript: todo tiene que estar en el HTML. -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Rancho Monte Cristo" />
-    <meta property="og:description" content="Un lugar para crear momentos inolvidables." />
+    <meta property="og:site_name" content="Rancho Monte Cristo" />
+    <meta property="og:locale" content="es_CR" />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:title" content="Rancho Monte Cristo · Alquiler para eventos en Nicoya" />
+    <meta
+      property="og:description"
+      content="Un lugar para crear momentos inolvidables. Alquiler del rancho completo para tus eventos en Nicoya, Guanacaste."
+    />
+    <meta property="og:image" content="%SITE_URL%/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Rancho Monte Cristo, alquiler para eventos en Nicoya, Guanacaste" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rancho Monte Cristo · Alquiler para eventos en Nicoya" />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.jpg" />
 
+    <!-- Conexiones anticipadas: la foto principal viene de Cloudinary y los
+         datos de la API. Abrir antes el TLS le ahorra ida y vuelta al LCP. -->
+    <!-- Sin crossorigin: las <img> se piden sin CORS, y una conexión abierta
+         en modo CORS no se reutilizaría para ellas. -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Solo los pesos que se usan: la serif va únicamente en 400 y sin
+         itálicas (se conserva el eje óptico, que mejora el titular grande). -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..500&family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <p style="padding: 2rem; font-family: sans-serif">
+        Rancho Monte Cristo — alquiler para eventos en Nicoya, Guanacaste. Este sitio necesita
+        JavaScript para mostrar la disponibilidad y el formulario de reserva.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

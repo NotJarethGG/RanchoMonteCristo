@@ -31,12 +31,17 @@
   --color-stone-700: #4c463c;
 
   /* Acentos */
-  --color-clay-700: #96502e;
-  --color-clay-600: #b4623a;
+  /* clay-600 se oscureció un 11 % respecto del original (#b4623a) para pasar
+     WCAG AA (4,5:1) como texto sobre crema, arena y blanco, y como fondo de
+     los botones con texto crema. El peor caso queda en 4,57. */
+  --color-clay-700: #8d4c2d;
+  --color-clay-600: #a05734;
   --color-clay-500: #c9764b;
   --color-clay-100: #f6e6dc;
   --color-gold-600: #a8863f;
   --color-gold-500: #c2a05a;
+  /* Dorado claro para texto pequeño sobre verdes oscuros (4,55:1). */
+  --color-gold-300: #d1b782;
   --color-gold-100: #f4ecd9;
 
   /* Estados */

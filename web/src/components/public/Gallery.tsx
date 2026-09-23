@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Expand } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { cn } from '@/lib/cn'
+import { imageSrcSet, imageUrl } from '@/lib/image'
 import type { GalleryImage } from '@/types'
 
 /**
@@ -70,25 +71,31 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
             <button
               key={image.id}
               onClick={() => setOpenIndex(index)}
+              aria-label={`Ampliar foto: ${image.title ?? image.alt ?? 'rancho'}`}
               className={cn(
                 'group relative overflow-hidden rounded-xl2 bg-sand-200 shadow-soft transition-shadow hover:shadow-lift',
                 index === 0 && 'col-span-2 row-span-2',
               )}
             >
+              {/* Miniatura al ancho real en que se muestra: la primera ocupa
+                  media pantalla en escritorio, el resto un cuarto. */}
               <img
-                src={image.url}
+                src={imageUrl(image.url, index === 0 ? 1200 : 600)}
+                srcSet={imageSrcSet(image.url, index === 0 ? [640, 960, 1280] : [320, 480, 640, 800])}
+                sizes={index === 0 ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, 50vw'}
                 alt={image.alt ?? image.title ?? 'Fotografía del rancho'}
                 loading={index < 3 ? 'eager' : 'lazy'}
+                decoding="async"
                 className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <span className="absolute inset-0 bg-linear-to-t from-bark-950/75 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
               <span className="absolute right-3 top-3 flex size-8 items-center justify-center rounded-full bg-cream-50/90 text-forest-900 opacity-0 transition-opacity group-hover:opacity-100">
-                <Expand className="size-3.5" />
+                <Expand className="size-3.5" aria-hidden="true" />
               </span>
 
               {image.title && (
-                <span className="absolute inset-x-0 bottom-0 translate-y-2 p-4 text-left text-sm font-medium text-cream-50 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <span aria-hidden="true" className="absolute inset-x-0 bottom-0 translate-y-2 p-4 text-left text-sm font-medium text-cream-50 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                   {image.title}
                 </span>
               )}
@@ -101,7 +108,9 @@ export function Gallery({ images = [] }: { images?: GalleryImage[] }) {
         {current && (
           <figure className="relative">
             <img
-              src={current.url}
+              src={imageUrl(current.url, 1600)}
+              srcSet={imageSrcSet(current.url, [960, 1600, 2400])}
+              sizes="(min-width: 1152px) 1152px, 100vw"
               alt={current.alt ?? current.title ?? ''}
               className="max-h-[78vh] w-full rounded-xl2 object-contain"
             />

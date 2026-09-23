@@ -1,5 +1,6 @@
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { whatsappLink } from '@/lib/format'
+import { imageSrcSet, imageUrl } from '@/lib/image'
 import type { GalleryImage, Ranch } from '@/types'
 
 export function FinalCta({ ranch, image }: { ranch?: Ranch; image?: GalleryImage }) {
@@ -9,7 +10,16 @@ export function FinalCta({ ranch, image }: { ranch?: Ranch; image?: GalleryImage
 
   return (
     <section className="relative overflow-hidden">
-      <img src={background} alt="" aria-hidden className="absolute inset-0 size-full object-cover" />
+      <img
+        src={imageUrl(background, 1920)}
+        srcSet={imageSrcSet(background, [640, 1280, 1920])}
+        sizes="100vw"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 size-full object-cover"
+      />
       <div className="absolute inset-0 bg-bark-950/75" />
 
       <div className="container-page relative py-24 text-center sm:py-32">
